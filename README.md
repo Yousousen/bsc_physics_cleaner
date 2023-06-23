@@ -1,8 +1,8 @@
-# Documentation
+# DOCUMENTATION
 
 Repository for BSc. Physics and Astronomy project: Improving the Performance of Conservative-to-Primitive Inversion in Relativistic Hydrodynamics Using Artificial Neural Networks. Thesis and presentation can be found in `thesis.pdf` and `presentation.pdf` in the root directory.
 
-## Directory structure
+## DIRECTORY STRUCTURE
 
 `models` contains trained models with their `net.pth`, `optimizer.pth`, `scheduler.pth`, `net.pt`, and all other data saved in csv and json files. The directories also contain their own local copy of the scripts in which the hyperparameters, subparameters and file output names are set to correspond with the model in question. These local scripts are just (outdated) states of the scripts `SRHD_ML.ipynb` (or `SRHD_ML.py`) and  `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) that are found in the `src` directory; they provide the models as they were generated for the thesis.
 
@@ -10,7 +10,7 @@ Repository for BSc. Physics and Astronomy project: Improving the Performance of 
 
 C++ source code files are located in the `cpp` directories.
 
-## Installation
+## INSTALLATION
 
 ### MMAAMS workstation
 
@@ -97,7 +97,7 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 
 1. Follow _How to use this notebook_ at the top of the script.
 
-## Script installation and usage troubleshooting
+## TROUBLESHOOTING: Script installation and usage
 
 ### Running models trained on the GPU on the CPU and vice versa
 
