@@ -2,17 +2,59 @@
 # coding: utf-8
 
 # # Neural network to learn conservative-to-primitive conversion in relativistic hydrodynamics
-# We use Optuna to do a type of Bayesian optimization of the hyperparameters of the model. We then train the model using these hyperparameters to recover the primitive pressure from the conserved variables.
+# 
+# ## How to use this notebook
+# 
+# ### Local installation
+# 
+# 1. Install required packages with `pip install -r requirements.txt` to your desired environment. Make sure to comment out `torch` if it is installed via conda.
+# 2. If a script version of this notebook is desired, comment (not uncomment) the first line of `nbconvert` cell.
+# 
+# ### Colab installation
+# 
+# 1.  Comment (not uncomment) the first line of the drive mounting cell.
+# 2.  Comment (not uncomment) the first line of the `pip install` cell.
+# 
+# <!-- - For colab we also want to set the runtime to GPU by clicking _Change runtime_ in the _Runtime_ menu, and -->
+# <!-- - We want to wait for the google drive connection popup to appear and follow the instructions. -->
+# 
+# ### Loading / Generating data
+# 3. Set `LOAD_DATA_FROM_CSV` to `True` / `False` to load data from csv files / generate data in this notebook.
+# 
+# ### Training without optimization
+# 
+# 4. Set `OPTIMIZE = False` in section _Constants and flags to set_.
+# 5. Set the desired other settings in _Constants and flags to set_ and the desired subparameters in _Defining the model and search space_ and run the entire notebook.
+# 
+# ### Training with optimization
+# 
+# 4. Set `OPTIMIZE = True` in section _Constants and flags to set_.
+# 5. Set the desired other settings in _Constants and flags to set_ and hyperparameter search spaces in _Defining the model and search space_ and run the entire notebook.
+# 
+# ### Loading an already trained model
+# 
+# 3. Run cells in section _Constants and flags to set_.
+# 4. Run cells with definitions in section _Generating the data_.
+# 5. Run cell with the definition of _Net_ in section _Defining the neural network_.
+# 6. Make sure the `net.pth`, `optimizer.pth`, `scheduler.pth`, `var_dict.json` and `train_output.csv` files are in the directory containing this notebook.
+# 7. Run the cells in section _Loading_ and continue from there.
+# 
+# ### Generating the C++ model
+# 
+# 8. Run section _Porting the model to C++_, this requires a model to be loaded.
+# 9. Set the path to the `net.pt` file in the C++ source file.
+# 10. `mkdir build && cd build`,
+# 11. Configure a `CMakeLists.txt` file as is done [here](https://pytorch.org/cppdocs/installing.html) if it is not already there.
+# 12. `cmake -DCMAKE_PREFIX_PATH=/path/to/libtorch/ ..`,
+# 13. Compile and run, e.g. `cmake --build . --config release && ./<executable name>`
+
 # 
 # Use this first cell to convert this notebook to a python script.
 
 # In[2]:
 
 
-# If running this command, make sure to have activated the desired python or conda environment first.
-#get_ipython().run_line_magic('%script', 'echo skipping')
-
-#get_ipython().system('pip install optuna tensorboard tensorboardX')
+#get_ipython().run_cell_magic('script', 'echo skipping', '\n!pip install optuna tensorboard tensorboardX\n')
 
 
 # In[3]:
@@ -21,7 +63,10 @@
 #get_ipython().run_cell_magic('script', 'echo skipping', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
 
 
-# In[4]:
+# ## Constants and flags to set
+# Defining some constants and parameters for convenience.
+
+# In[ ]:
 
 
 # Importing the libraries
@@ -37,9 +82,6 @@ import tensorboardX as tbx
 # Checking if GPU is available and setting the device accordingly
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
-# ## Constants and flags to set
-# Defining some constants and parameters for convenience.
 
 # In[5]:
 
@@ -1154,7 +1196,7 @@ test_metrics_loaded = [
 ]
 
 
-# In[9]:
+# In[10]:
 
 
 batch_size_loaded
@@ -1176,10 +1218,17 @@ optimizer_loaded
 optimizer_loaded.__dict__ # print the subparameters of the optimizer
 scheduler_loaded
 scheduler_loaded.__dict__ # print the subparameters of the scheduler
-#train_losses_loaded
-#test_losses_loaded
-#train_metrics_loaded
-#test_metrics_loaded
+train_losses_loaded
+test_losses_loaded
+train_metrics_loaded
+test_metrics_loaded
+
+
+# In[13]:
+
+
+len(test_metrics_loaded)
+len(test_metrics_loaded[0])
 
 
 # Let us verify correct loading of the train and test metrics by visualizing them again but now through the loaded values. Likewise for the train and test losses.
@@ -1264,6 +1313,20 @@ plt.savefig("NNSR1_MSE_plot.png", dpi=300)
 
 
 #get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
+
+
+# In[14]:
+
+
+import pandas as pd
+
+def save_metrics_to_csv(metrics_data, filename):
+    df = pd.DataFrame(metrics_data)
+    df.columns = ['L1 Norm', 'Linf Norm']
+    df.to_csv(filename, index=False)
+
+save_metrics_to_csv(train_metrics_loaded, 'train_metrics_NNSR1.csv')
+save_metrics_to_csv(test_metrics_loaded, 'test_metrics_NNSR1.csv')
 
 
 # ---

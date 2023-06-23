@@ -2,25 +2,73 @@
 # coding: utf-8
 
 # # Neural network to learn conservative-to-primitive conversion in relativistic hydrodynamics
-# We use Optuna to do a type of Bayesian optimization of the hyperparameters of the model. We then train the model using these hyperparameters to recover the primitive pressure from the conserved variables.
+# 
+# ## How to use this notebook
+# 
+# ### Local installation
+# 
+# 1. Install required packages with `pip install -r requirements.txt` to your desired environment. Make sure to comment out `torch` if it is installed via conda.
+# 2. If a script version of this notebook is desired, comment (not uncomment) the first line of `nbconvert` cell.
+# 
+# ### Colab installation
+# 
+# 1.  Comment (not uncomment) the first line of the drive mounting cell.
+# 2.  Comment (not uncomment) the first line of the `pip install` cell.
+# 
+# <!-- - For colab we also want to set the runtime to GPU by clicking _Change runtime_ in the _Runtime_ menu, and -->
+# <!-- - We want to wait for the google drive connection popup to appear and follow the instructions. -->
+# 
+# ### Loading / Generating data
+# 3. Set `LOAD_DATA_FROM_CSV` to `True` / `False` to load data from csv files / generate data in this notebook.
+# 
+# ### Training without optimization
+# 
+# 4. Set `OPTIMIZE = False` in section _Constants and flags to set_.
+# 5. Set the desired other settings in _Constants and flags to set_ and the desired subparameters in _Defining the model and search space_ and run the entire notebook.
+# 
+# ### Training with optimization
+# 
+# 4. Set `OPTIMIZE = True` in section _Constants and flags to set_.
+# 5. Set the desired other settings in _Constants and flags to set_ and hyperparameter search spaces in _Defining the model and search space_ and run the entire notebook.
+# 
+# ### Loading an already trained model
+# 
+# 3. Run cells in section _Constants and flags to set_.
+# 4. Run cells with definitions in section _Generating the data_.
+# 5. Run cell with the definition of _Net_ in section _Defining the neural network_.
+# 6. Make sure the `net.pth`, `optimizer.pth`, `scheduler.pth`, `var_dict.json` and `train_output.csv` files are in the directory containing this notebook.
+# 7. Run the cells in section _Loading_ and continue from there.
+# 
+# ### Generating the C++ model
+# 
+# 8. Run section _Porting the model to C++_, this requires a model to be loaded.
+# 9. Set the path to the `net.pt` file in the C++ source file.
+# 10. `mkdir build && cd build`,
+# 11. Configure a `CMakeLists.txt` file as is done [here](https://pytorch.org/cppdocs/installing.html) if it is not already there.
+# 12. `cmake -DCMAKE_PREFIX_PATH=/path/to/libtorch/ ..`,
+# 13. Compile and run, e.g. `cmake --build . --config release && ./<executable name>`
+
 # 
 # Use this first cell to convert this notebook to a python script.
 
 # Next some cells for working on google colab,
 
-# In[2]:
+# In[3]:
 
 
 #get_ipython().run_cell_magic('script', 'echo skipping', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
 
 
-# In[3]:
+# In[4]:
 
 
 #get_ipython().run_cell_magic('script', 'echo skipping', '\n!pip install optuna tensorboard tensorboardX\n')
 
 
-# In[4]:
+# ## Constants and flags to set
+# Defining some constants and parameters for convenience.
+
+# In[ ]:
 
 
 # Importing the libraries
@@ -37,10 +85,7 @@ import tensorboardX as tbx
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-# ## Constants and flags to set
-# Defining some constants and parameters for convenience.
-
-# In[5]:
+# In[6]:
 
 
 N_TRIALS = 250 # Number of trials for hyperparameter optimization
@@ -85,7 +130,7 @@ np.random.seed(17) # Uncomment for pseudorandom data.
 
 # ## Generating the data
 
-# In[6]:
+# In[7]:
 
 
 # Defining an analytic equation of state (EOS) for an ideal gas
@@ -352,7 +397,7 @@ plt.show()
 
 # ## Defining the neural network
 
-# In[7]:
+# In[8]:
 
 
 # Defining a class for the network
@@ -1059,8 +1104,8 @@ save_file("train_output.csv")
 
 # First figure: Train and Test L1 Norm
 plt.figure(figsize=(6, 4))
-plt.plot([m["l1_norm"] for m in train_metrics_loaded], label="Train L1 Norm", color='blue')
-plt.plot([m["l1_norm"] for m in test_metrics_loaded], label="Test L1 Norm", color='red')
+plt.plot([m["l1_norm"] for m in train_metrics], label="Train L1 Norm", color='blue')
+plt.plot([m["l1_norm"] for m in test_metrics], label="Test L1 Norm", color='red')
 plt.xlabel("Epoch")
 plt.ylabel("L1 Norm")
 plt.title("NNSR2 Train and Test L1 Norm per Epoch")
@@ -1074,8 +1119,8 @@ plt.savefig("NNSR2_L1_norm_plot.png", dpi=300)
 
 # Second figure: Train and Test Linf Norm
 plt.figure(figsize=(6, 4))
-plt.plot([m["linf_norm"] for m in train_metrics_loaded], label="Train Linf Norm", color='blue')
-plt.plot([m["linf_norm"] for m in test_metrics_loaded], label="Test Linf Norm", color='red')
+plt.plot([m["linf_norm"] for m in train_metrics], label="Train Linf Norm", color='blue')
+plt.plot([m["linf_norm"] for m in test_metrics], label="Test Linf Norm", color='red')
 plt.xlabel("Epoch")
 plt.ylabel("Linf Norm")
 plt.title("NNSR2 Train and Test Linf Norm per Epoch")
@@ -1089,8 +1134,8 @@ plt.savefig("NNSR2_Linf_norm_plot.png", dpi=300)
 
 # Third figure: MSE of training data and test data
 plt.figure(figsize=(6, 4))
-plt.plot(train_losses_loaded, label="Training Data", color='blue')
-plt.plot(test_losses_loaded, label="Test Data", color='red')
+plt.plot(train_losses, label="Training Data", color='blue')
+plt.plot(test_losses, label="Test Data", color='red')
 plt.xlabel("Epoch")
 plt.ylabel("MSE")
 plt.title("NNSR2 MSE of Training and Test Data per Epoch")
@@ -1105,7 +1150,7 @@ plt.savefig("NNSR2_MSE_plot.png", dpi=300)
 
 # ## Loading
 
-# In[8]:
+# In[9]:
 
 
 import json
@@ -1368,6 +1413,20 @@ plt.savefig("NNSR2_MSE_plot.png", dpi=300)
 
 
 #get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
+
+
+# In[10]:
+
+
+import pandas as pd
+
+def save_metrics_to_csv(metrics_data, filename):
+    df = pd.DataFrame(metrics_data)
+    df.columns = ['L1 Norm', 'Linf Norm']
+    df.to_csv(filename, index=False)
+
+save_metrics_to_csv(train_metrics_loaded, 'train_metrics_NNSR2.csv')
+save_metrics_to_csv(test_metrics_loaded, 'test_metrics_NNSR2.csv')
 
 
 # ## Evaluating the network on arbirary input

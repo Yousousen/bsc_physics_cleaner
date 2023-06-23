@@ -7,7 +7,7 @@
 # 
 # ### Local installation
 # 
-# 1. Install required packages with `pip install -r requirements.txt` to your desired environment.
+# 1. Install required packages with `pip install -r requirements.txt` to your desired environment. Make sure to comment out `torch` if it is installed via conda.
 # 2. If a script version of this notebook is desired, comment (not uncomment) the first line of `nbconvert` cell.
 # 
 # ### Colab installation
@@ -23,30 +23,30 @@
 # 
 # ### Training without optimization
 # 
-# 4. Set `OPTIMIZE = False` in section _Constants and flags to set_.
-# 5. Run the entire notebook.
+# 4. Set `OPTIMIZE = False` and `STUDY_NAME = None` in section _Constants and flags to set_.
+# 5. Set the desired hyperparameters and other settings in _Constants and flags to set_ and the desired subparameters in _Defining the model and search space_ and run the entire notebook.
 # 
 # ### Training with optimization
 # 
-# 4. Set `OPTIMIZE = True` in section _Constants and flags to set_.
-# 5. Run the entire notebook.
+# 4. Set `OPTIMIZE = True` and `STUDY_NAME` to the desired name in section _Constants and flags to set_.
+# 5. Set the desired other settings in _Constants and flags to set_ and hyperparameter search spaces in _Defining the model and search space_ and run the entire notebook.
 # 
 # ### Loading an already trained model
 # 
-# 4. Run cells in section _Initialization_.
-# 5. Run cells with definitions in section _Input data and labels_.
-# 6. Run cell with the definition of _Net_ in section _Defining the neural network_.
-# 7. Make sure the `net.pth`, `optimizer.pth`, `scheduler.pth`, `var_dict.json` and `train_output.csv` files are in the directory containing this notebook.
-# 8. Run the cells in section _Loading_ and continue from there.
+# 3. Run cells in section _Initialization_.
+# 4. Run cells with definitions in section _Input data and labels_.
+# 5. Run cell with the definition of _Net_ in section _Defining the neural network_.
+# 6. Make sure the `net.pth`, `optimizer.pth`, `scheduler.pth`, `var_dict.json` and `train_output.csv` files are in the directory containing this notebook.
+# 7. Run the cells in section _Loading_ and continue from there.
 # 
 # ### Generating the C++ model
 # 
-# 9. Run section _Porting the model to C++_, this requires a model to be loaded.
-# 10. Set the path to the `net.pt` file in the C++ source file.
-# 11. `mkdir build && cd build`,
-# 12. Configure a `CMakeLists.txt` file as is done [here](https://pytorch.org/cppdocs/installing.html).
-# 13. `cmake -DCMAKE_PREFIX_PATH=/path/to/libtorch/ ..`,
-# 14. Compile and run, e.g. `cmake --build . --config release && ./<executable name>`
+# 8. Run section _Porting the model to C++_, this requires a model to be loaded.
+# 9. Set the path to the `net.pt` file in the C++ source file.
+# 10. `mkdir build && cd build`,
+# 11. Configure a `CMakeLists.txt` file as is done [here](https://pytorch.org/cppdocs/installing.html).
+# 12. `cmake -DCMAKE_PREFIX_PATH=/path/to/libtorch/ ..`,
+# 13. Compile and run, e.g. `cmake --build . --config release && ./<executable name>`
 
 # ## Initialization
 
@@ -55,7 +55,7 @@
 
 # Next some cells for working on **google colab**,
 
-# In[ ]:
+# In[7]:
 
 
 import os
@@ -64,7 +64,7 @@ import shutil
 # check if the drive is mounted
 drive_mounted = os.path.exists("/content/drive")
 # change this to your desired folder
-drive_folder = "/content/drive/My Drive/bsc/con2prim_GRMHD/1e5_runs/" # NOTE: Set this before properly.
+drive_folder = "/content/drive/desired_path"
 
 # define a function to save a file to the drive or the current directory
 def save_file(file_name):
@@ -78,21 +78,24 @@ def save_file(file_name):
     pass
 
 
-# In[ ]:
+# In[8]:
 
 
-#get_ipython().run_cell_magic('script', 'echo skipping # NOTE: Set this before properly.', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
+#get_ipython().run_cell_magic('script', 'echo skipping', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
 
 
-# In[ ]:
+# In[9]:
 
 
-#get_ipython().run_cell_magic('script', 'echo skipping # NOTE: Set this before properly.', '\n!pip install optuna optuna[visualization] tensorboard tensorboardX plotly\n')
+#get_ipython().run_cell_magic('script', 'echo skipping', '\n!pip install optuna optuna[visualization] tensorboard tensorboardX plotly\n')
 
 
-# Importing the **libraries**,
+# ### Constants and flags to set
+# Defining some constants and parameters for convenience.
+# 
+# **NOTE**: Some **subparameters** still need to be adjusted in the `create_model` function itself as of (Tue May 16 07:42:45 AM CEST 2023) in the case the model is being trained without optimization.
 
-# In[ ]:
+# In[10]:
 
 
 import numpy as np
@@ -110,24 +113,18 @@ import json
 import pandas as pd
 
 
-# ### Constants and flags to set
-# Defining some constants and parameters for convenience.
-# 
-# **NOTE**: Some **subparameters** still need to be adjusted in the `create_model` function itself as of (Tue May 16 07:42:45 AM CEST 2023) in the case the model is being trained without optimization.
-
-# In[ ]:
+# In[11]:
 
 
 # Checking if GPU is available and setting the device accordingly
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-N_TRIALS = 5000 # Number of trials for hyperparameter optimization # NOTE: Set this properly.
-OPTIMIZE = True # Whether to optimize the hyperparameters or to use predetermined values. # NOTE: Set this properly.
+N_TRIALS = 2 # Number of trials for hyperparameter optimization
+OPTIMIZE = True # Whether to optimize the hyperparameters or to use predetermined values.
 ZSCORE_NORMALIZATION = False # Whether to z-score normalize the input data.
-LOAD_DATA_FROM_CSV = False  # If not true we generate the data in this file and save to {x_train,y_train,x_test,y_test}.csv, otherwise we load the data from files of the same name. # NOTE: Set this before properly.
-#STUDY_NAME = None
-STUDY_NAME = "Optimization_05-06-23_15:16_long_run1" # NOTE: Set this before properly
-LOAD_PREVIOUS_STUDY = False # NOTE: Set this before properly
+LOAD_DATA_FROM_CSV = False  # If not true we generate the data in this file and save to {x_train,y_train,x_test,y_test}.csv, otherwise we load the data from files of the same name.
+# STUDY_NAME = None
+STUDY_NAME = "TestStudy"
 
 csv_filenames = { # File names to load input data and labels from if LOAD_DATA_FROM_CSV is True.
     "x_train": "x_train.csv",
@@ -140,32 +137,23 @@ csv_filenames = { # File names to load input data and labels from if LOAD_DATA_F
 
 # Values to use for hyperparameters if OPTIMIZE is False; set these to the best parameters found by Optuna.
 # NOTE: TODO: Currently (Sat May 27 05:16:57 PM CEST 2023) there are still subparameters to be set in create_model function.
-N_LAYERS_NO_OPT = 5
-N_UNITS_NO_OPT = [3173, 2551, 3600, 3959, 104]
-HIDDEN_ACTIVATION_NAME_NO_OPT = "GELU"
+N_LAYERS_NO_OPT = 3
+N_UNITS_NO_OPT = [555, 458, 115]
+HIDDEN_ACTIVATION_NAME_NO_OPT = "LeakyReLU"
 OUTPUT_ACTIVATION_NAME_NO_OPT = "Linear"
-LOSS_NAME_NO_OPT = "MSE"
-OPTIMIZER_NAME_NO_OPT = "Adam"
-LR_NO_OPT = 1.429128992411471e-06
-BATCH_SIZE_NO_OPT = 512
-N_EPOCHS_NO_OPT = 500 # NOTE: Set this before properly
-SCHEDULER_NAME_NO_OPT = "StepLR"
-DROPOUT_RATE_NO_OPT = 0.3037220060313668
-
-# Subparameters
-WEIGHT_DECAY_NO_OPT = 0.0008705866531443986
-BETA1_NO_OPT = 0.9948486404725556
-BETA2_NO_OPT = 0.9990123775599838
-STEP_SIZE_NO_OPT = 5
-GAMMA_NO_OPT = 0.10899783210727848
-
-
+LOSS_NAME_NO_OPT = "Huber"
+OPTIMIZER_NAME_NO_OPT = "RMSprop"
+LR_NO_OPT = 0.000122770896701404
+BATCH_SIZE_NO_OPT = 49
+N_EPOCHS_NO_OPT = 2
+SCHEDULER_NAME_NO_OPT = "ReduceLROnPlateau"
+DROPOUT_RATE_NO_OPT = 0.2
 
 N_INPUTS = 14  # Number of input features.
 N_OUTPUTS = 1  # Number of outputs.
 Gamma = 5/3  # Adiabatic index
 
-n_samples = 1e5 # NOTE: Set this properly.
+n_samples = 1e5
 train_frac = 0.7  # 70% of data for training
 val_frac = 0.15  # 15% of data for validation, rest for testing
 
@@ -184,14 +172,14 @@ gyy_interval = (0.9, 1.1)
 gyz_interval = (0, 0.1)
 gzz_interval = (0.9, 1.1)
 
-np.random.seed(300) # Comment for true random data.
+np.random.seed(200) # Comment for true random data.
 
 
 # ## Input data and labels
 # 
 # We either generate the data or load the data. First the definitions for generating the data come below.
 
-# In[ ]:
+# In[12]:
 
 
 # Defining an analytic equation of state (EOS) for an ideal gas
@@ -336,13 +324,13 @@ def generate_labels(rho, epsilon, vx, vy, vz):
 
 # ### Generating or loading input data and labels
 
-# In[ ]:
+# In[13]:
 
 
 #get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
 
 
-# In[ ]:
+# In[14]:
 
 
 if LOAD_DATA_FROM_CSV:
@@ -366,7 +354,7 @@ if LOAD_DATA_FROM_CSV:
     rho = epsilon = vx = vy = vz = Bx = By = Bz = gxx = gxy = gxz = gyy = gyz  = gzz = None
 
 
-# In[ ]:
+# In[15]:
 
 
 if not LOAD_DATA_FROM_CSV:
@@ -374,7 +362,7 @@ if not LOAD_DATA_FROM_CSV:
     rho, epsilon, vx, vy, vz, Bx, By, Bz, gxx, gxy, gxz, gyy, gyz, gzz = generate_samples(n_samples)
 
 
-# In[ ]:
+# In[16]:
 
 
 if not LOAD_DATA_FROM_CSV:
@@ -411,7 +399,7 @@ if not LOAD_DATA_FROM_CSV:
     save_file(csv_filenames["y_test"])
 
 
-# In[ ]:
+# In[17]:
 
 
 x_train.shape
@@ -428,7 +416,7 @@ x_test
 y_test
 
 
-# In[ ]:
+# In[18]:
 
 
 torch.isnan(x_train).any()
@@ -439,7 +427,7 @@ torch.isnan(y_val).any()
 torch.isnan(y_test).any()
 
 
-# In[ ]:
+# In[19]:
 
 
 nan_mask_train = torch.isnan(x_train)     # get a boolean mask indicating NaN values
@@ -462,13 +450,13 @@ nan_indices_test
 
 # ### Visualizing sampled data
 
-# In[ ]:
+# In[20]:
 
 
 #get_ipython().run_cell_magic('script', 'echo skipping', '\nif not LOAD_DATA_FROM_CSV:\n    rho\n    epsilon\n    vx\n    vy\n    vz \n    Bx\n    By\n    Bz\n    gxx\n    gxy\n    gxz\n    gyy\n    gyz\n    gzz \n')
 
 
-# In[ ]:
+# In[21]:
 
 
 if not LOAD_DATA_FROM_CSV:
@@ -489,19 +477,19 @@ if not LOAD_DATA_FROM_CSV:
     print(len(gzz))
 
 
-# In[ ]:
+# In[22]:
 
 
 #get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
 
 
-# In[ ]:
+# In[23]:
 
 
 #get_ipython().run_cell_magic('script', 'echo skipping', '\nplt.hist([np.random.uniform(0, 0.999) for _ in range(n_train_samples)], bins=20)\n')
 
 
-# In[ ]:
+# In[24]:
 
 
 #get_ipython().run_cell_magic('script', 'echo skipping', '\nepsilon\n')
@@ -509,7 +497,7 @@ if not LOAD_DATA_FROM_CSV:
 
 # The reason the sampling is not uniformly distributed in the following plots is due to the resampling and the fact that we certain values of e.g. velocity are more likely to violate the speed of light constraint than others.
 
-# In[ ]:
+# In[25]:
 
 
 #%%script echo skipping
@@ -552,13 +540,13 @@ if not LOAD_DATA_FROM_CSV:
     plt.show()
 
 
-# In[ ]:
+# In[26]:
 
 
 #get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
 
 
-# In[ ]:
+# In[27]:
 
 
 #%%script echo skipping
@@ -573,8 +561,8 @@ plt.suptitle('Histograms of input variables before (or without at all) z-score n
 for i in range(N_INPUTS):
     plt.subplot(7, 2, i+1)
     data = x_train[:, i].cpu().numpy() # Convert tensor to numpy array for percentile calculation
-    lower_bound, upper_bound = np.percentile(data, [1, 100]) # NOTE: Use this instead to visualize all the data.
-    # lower_bound, upper_bound = np.percentile(data, [1, 90]) # Calculate 1st and 99th percentile
+    # lower_bound, upper_bound = np.percentile(data, [1, 100]) # NOTE: Use this instead to visualize all the data.
+    lower_bound, upper_bound = np.percentile(data, [1, 90]) # Calculate 1st and 99th percentile
 
     plt.hist(data, bins=50, range=(lower_bound, upper_bound)) # Set range to the calculated percentile range
     plt.xlabel(variable_names[i])
@@ -604,7 +592,7 @@ plt.show()
 
 # ### Data normalization
 
-# In[ ]:
+# In[28]:
 
 
 # Computing summary statistics of the input variables before and after z-score normalization
@@ -614,13 +602,13 @@ print(torch.stack([torch.min(x_train, dim=0).values, torch.max(x_train, dim=0).v
 
 # Perform z-score normalization
 
-# In[ ]:
+# In[29]:
 
 
 #get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
 
 
-# In[ ]:
+# In[30]:
 
 
 if ZSCORE_NORMALIZATION:
@@ -667,13 +655,13 @@ if ZSCORE_NORMALIZATION:
 
 # Plotting the histograms of the input data after normalization if z-score normalization was performed.
 
-# In[ ]:
+# In[31]:
 
 
 #get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
 
 
-# In[ ]:
+# In[32]:
 
 
 if not LOAD_DATA_FROM_CSV:
@@ -699,7 +687,7 @@ if not LOAD_DATA_FROM_CSV:
         plt.show()
 
 
-# In[ ]:
+# In[33]:
 
 
 if ZSCORE_NORMALIZATION:
@@ -710,7 +698,7 @@ if ZSCORE_NORMALIZATION:
 
 # ### Visualizing input data and labels
 
-# In[ ]:
+# In[34]:
 
 
 x_train
@@ -723,7 +711,7 @@ y_test
 
 # Checking if our output is always positive ~~by plotting a histogram of y_train and y_test tensors~~
 
-# In[ ]:
+# In[35]:
 
 
 import torch
@@ -740,7 +728,7 @@ any_negative = torch.any(tensor < 0)
 print(any_negative)
 
 
-# In[ ]:
+# In[36]:
 
 
 y_train.shape
@@ -756,7 +744,7 @@ any_negative = torch.any(x_train < 0)
 any_negative
 
 
-# In[ ]:
+# In[37]:
 
 
 #%%script echo skipping
@@ -782,7 +770,7 @@ plt.tight_layout()
 plt.show()
 
 
-# In[ ]:
+# In[38]:
 
 
 #get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
@@ -790,7 +778,7 @@ plt.show()
 
 # ## Defining the neural network
 
-# In[ ]:
+# In[39]:
 
 
 # Defining a class for the network
@@ -864,13 +852,13 @@ class Net(nn.Module):
         return x # Returning the output tensor
 
 
-# In[ ]:
+# In[40]:
 
 
 #get_ipython().run_cell_magic('script', 'echo skipping', '\n[1,2,3]\n[1,2,3][:-1]\n')
 
 
-# In[ ]:
+# In[41]:
 
 
 for x in [1,2,3][:-1]:
@@ -880,7 +868,7 @@ for x in [1,2,3][:-1]:
 
 # ## Defining the model and search space
 
-# In[ ]:
+# In[42]:
 
 
 # Defining a function to create a trial network and optimizer
@@ -1078,7 +1066,7 @@ def create_model(trial, optimize):
         if optimizer_name == "SGD":
             optimizer = optim.SGD(net.parameters(), lr=lr)
         elif optimizer_name == "Adam":
-            optimizer = optim.Adam(net.parameters(), lr=lr, weight_decay=WEIGHT_DECAY_NO_OPT, betas=(BETA1_NO_OPT, BETA2_NO_OPT))
+            optimizer = optim.Adam(net.parameters(), lr=lr)
         elif optimizer_name == "RMSprop":
             optimizer = optim.RMSprop(net.parameters(), lr=lr)
         else:
@@ -1086,7 +1074,7 @@ def create_model(trial, optimize):
 
         # Creating the learning rate scheduler from its name
         if scheduler_name == "StepLR":
-            scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=STEP_SIZE_NO_OPT, gamma=GAMMA_NO_OPT)
+            scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
         elif scheduler_name == "ExponentialLR":
             scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
         elif scheduler_name == "CosineAnnealingLR":
@@ -1108,13 +1096,11 @@ def create_model(trial, optimize):
     return net, loss_fn, optimizer, batch_size, n_epochs, scheduler, loss_name, optimizer_name, scheduler_name, n_units, n_layers, hidden_activation, output_activation, lr, dropout_rate
 
 
-
-
 #  ## The training and evaluation loop
 # 
 #  We first define a couple of functions used in the training and evaluation.
 
-# In[ ]:
+# In[43]:
 
 
 # Defining a function that computes loss and metrics for a given batch
@@ -1174,7 +1160,7 @@ def update_scheduler(scheduler, test_loss):
 
 # Now for the actual training and evaluation loop,
 
-# In[ ]:
+# In[44]:
 
 
 # Defining a function to train and evaluate a network
@@ -1333,7 +1319,7 @@ def train_and_eval(net, loss_fn, optimizer, batch_size, n_epochs, scheduler, tra
 
 # ## The objective function and hyperparameter tuning
 
-# In[ ]:
+# In[45]:
 
 
 # Defining an objective function for Optuna to minimize
@@ -1379,7 +1365,7 @@ def objective(trial):
     return val_metrics[-1]["l1_norm"]
 
 
-# In[ ]:
+# In[46]:
 
 
 # Visualize Optuna study while its running, alternative to tensorboard
@@ -1874,7 +1860,7 @@ test_metrics_loaded = [
     for i in range(len(train_df_loaded))
 ]
 
-if OPTIMIZE or LOAD_PREVIOUS_STUDY:
+if STUDY_NAME is not None:
   # Loading the study from the SQLite file
   # TODO: Fix this one, or we just use pickle
   # study_loaded_db = optuna.load_study(study_name=f'{STUDY_NAME}', 
@@ -1910,7 +1896,7 @@ var_dict_loaded["dropout_rate"]
 # In[ ]:
 
 
-if OPTIMIZE or LOAD_PREVIOUS_STUDY:
+if STUDY_NAME is not None:
     pass
     # study_loaded_db
 
@@ -1918,7 +1904,7 @@ if OPTIMIZE or LOAD_PREVIOUS_STUDY:
 # In[ ]:
 
 
-if OPTIMIZE or LOAD_PREVIOUS_STUDY:
+if STUDY_NAME is not None:
     study_loaded_pkl
     study_loaded_pkl.best_params
 
@@ -1926,7 +1912,7 @@ if OPTIMIZE or LOAD_PREVIOUS_STUDY:
 # In[ ]:
 
 
-if OPTIMIZE or LOAD_PREVIOUS_STUDY:
+if STUDY_NAME is not None:
     best_trial_params_loaded
 
 
@@ -2014,15 +2000,14 @@ plt.plot([m["l1_norm"] for m in train_metrics_loaded], label="Train L1 Norm", co
 plt.plot([m["l1_norm"] for m in test_metrics_loaded], label="Test L1 Norm", color='red')
 plt.xlabel("Epoch")
 plt.ylabel("L1 Norm")
-plt.title("NNGRX Train and Test L1 Norm per Epoch")
+plt.title("NNGR2 Train and Test L1 Norm per Epoch")
 plt.yscale("log")
 plt.grid(True)
-plt.xlim(right=200)
-plt.ylim(1e-3, 1e2)
+plt.xlim(right=500)
+plt.ylim(1e-1, 1e1)
 plt.legend()
 plt.tight_layout()
-# plt.savefig("NNGRX_L1_norm_plot.png", dpi=300)
-plt.savefig("NNGRX_L1_norm_plot.png")
+plt.savefig("NNGR2_L1_norm_plot.png", dpi=300)
 
 # Second figure: Train and Test Linf Norm
 plt.figure(figsize=(6, 4))
@@ -2030,15 +2015,14 @@ plt.plot([m["linf_norm"] for m in train_metrics_loaded], label="Train Linf Norm"
 plt.plot([m["linf_norm"] for m in test_metrics_loaded], label="Test Linf Norm", color='red')
 plt.xlabel("Epoch")
 plt.ylabel("Linf Norm")
-plt.title("NNGRX Train and Test Linf Norm per Epoch")
+plt.title("NNGR2 Train and Test Linf Norm per Epoch")
 plt.yscale("log")
 plt.grid(True)
-plt.xlim(right=200)
-plt.ylim(1e-3, 1e2)
+plt.xlim(right=500)
+plt.ylim(1e-1, 1e3)
 plt.legend()
 plt.tight_layout()
-# plt.savefig("NNGRX_Linf_norm_plot.png", dpi=300)
-plt.savefig("NNGRX_Linf_norm_plot.png")
+plt.savefig("NNGR2_Linf_norm_plot.png", dpi=300)
 
 # Third figure: MSE of training data and test data
 plt.figure(figsize=(6, 4))
@@ -2046,21 +2030,34 @@ plt.plot(train_losses_loaded, label="Training Data", color='blue')
 plt.plot(test_losses_loaded, label="Test Data", color='red')
 plt.xlabel("Epoch")
 plt.ylabel("MSE")
-plt.title("NNGRX MSE of Training and Test Data per Epoch")
+plt.title("NNGR2 MSE of Training and Test Data per Epoch")
 plt.yscale("log")
 plt.grid(True)
-plt.xlim(right=200)
-plt.ylim(1e-7, 1e0)
+plt.xlim(right=500)
+plt.ylim(1e-1, 1e4)
 plt.legend()
 plt.tight_layout()
-# plt.savefig("NNGRX_MSE_plot.png", dpi=300)
-plt.savefig("NNGRX_MSE_plot.png")
+plt.savefig("NNGR2_MSE_plot.png", dpi=300)
 
 
 # In[ ]:
 
 
 #get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
+
+
+# In[ ]:
+
+
+import pandas as pd
+
+def save_metrics_to_csv(metrics_data, filename):
+    df = pd.DataFrame(metrics_data)
+    df.columns = ['L1 Norm', 'Linf Norm']
+    df.to_csv(filename, index=False)
+
+save_metrics_to_csv(train_metrics_loaded, 'train_metrics_NNGR2.csv')
+save_metrics_to_csv(test_metrics_loaded, 'test_metrics_NNGR2.csv')
 
 
 # ## Counting the number of parameters in the network.
