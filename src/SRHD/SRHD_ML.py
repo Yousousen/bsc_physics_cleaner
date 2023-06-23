@@ -5,41 +5,18 @@
 # We use Optuna to do a type of Bayesian optimization of the hyperparameters of the model. We then train the model using these hyperparameters to recover the primitive pressure from the conserved variables.
 # 
 # Use this first cell to convert this notebook to a python script.
-# 
-# **training with found best parameters:** 
-# ```
-# Best trial:
-#   Value:  0.00270861783316941
-#   Params: 
-#     n_layers: 3
-#     n_units_0: 555
-#     n_units_1: 458
-#     n_units_2: 115
-#     hidden_activation: ReLU
-#     output_activation: ReLU
-#     loss: Huber
-#     optimizer: RMSprop
-#     lr: 0.000122770896701404
-#     batch_size: 49
-#     n_epochs: 152
-#     scheduler: ReduceLROnPlateau
-#     factor: 0.18979341786654758
-#     patience: 11
-#     threshold: 0.0017197466122611932
-# ```
-
 # Next some cells for working on google colab,
 
 # In[2]:
 
 
-get_ipython().run_cell_magic('script', 'echo skipping', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
+#get_ipython().run_cell_magic('script', 'echo skipping', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
 
 
 # In[3]:
 
 
-get_ipython().run_cell_magic('script', 'echo skipping', '\n!pip install optuna tensorboard tensorboardX\n')
+#get_ipython().run_cell_magic('script', 'echo skipping', '\n!pip install optuna tensorboard tensorboardX\n')
 
 
 # In[4]:
@@ -244,7 +221,7 @@ rho_test, vx_test, epsilon_test = sample_primitive_variables(n_test_samples)
 # In[51]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
 
 
 # In[52]:
@@ -388,7 +365,7 @@ plt.show()
 # In[58]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
 
 
 # ## Defining the neural network
@@ -1359,7 +1336,7 @@ test_metrics_loaded[-10:]
 # In[13]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
 
 
 # In[14]:
@@ -1414,7 +1391,7 @@ plt.savefig("NNSR3_MSE_plot.png", dpi=300)
 # In[75]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
 
 
 # ## Evaluating the network on arbirary input

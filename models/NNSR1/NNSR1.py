@@ -10,15 +10,15 @@
 
 
 # If running this command, make sure to have activated the desired python or conda environment first.
-get_ipython().run_line_magic('%script', 'echo skipping')
+#get_ipython().run_line_magic('%script', 'echo skipping')
 
-get_ipython().system('pip install optuna tensorboard tensorboardX')
+#get_ipython().system('pip install optuna tensorboard tensorboardX')
 
 
 # In[3]:
 
 
-get_ipython().run_cell_magic('script', 'echo skipping', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
+#get_ipython().run_cell_magic('script', 'echo skipping', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
 
 
 # In[4]:
@@ -1208,7 +1208,7 @@ test_metrics_loaded[-10:]
 # In[29]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
 
 
 # In[32]:
@@ -1263,7 +1263,7 @@ plt.savefig("NNSR1_MSE_plot.png", dpi=300)
 # In[ ]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
 
 
 # ---

@@ -33,13 +33,13 @@
 # In[2]:
 
 
-get_ipython().run_cell_magic('script', 'echo skipping', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
+#get_ipython().run_cell_magic('script', 'echo skipping', "\nfrom google.colab import drive\ndrive.mount('/content/drive')\n")
 
 
 # In[3]:
 
 
-get_ipython().run_cell_magic('script', 'echo skipping', '\n!pip install optuna tensorboard tensorboardX\n')
+#get_ipython().run_cell_magic('script', 'echo skipping', '\n!pip install optuna tensorboard tensorboardX\n')
 
 
 # In[4]:
@@ -244,7 +244,7 @@ rho_test, vx_test, epsilon_test = sample_primitive_variables(n_test_samples)
 # In[51]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
 
 
 # In[52]:
@@ -388,7 +388,7 @@ plt.show()
 # In[58]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
 
 
 # ## Defining the neural network
@@ -1359,7 +1359,7 @@ test_metrics_loaded[-10:]
 # In[13]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "last_expr_or_assign"')
 
 
 # In[14]:
@@ -1414,7 +1414,7 @@ plt.savefig("NNSR3_MSE_plot.png", dpi=300)
 # In[75]:
 
 
-get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
+#get_ipython().run_line_magic('config', 'InteractiveShell.ast_node_interactivity = "all"')
 
 
 # ## Evaluating the network on arbirary input

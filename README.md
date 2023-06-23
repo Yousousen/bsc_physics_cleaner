@@ -4,13 +4,27 @@ Repository for BSc. Physics and Astronomy project: Improving the Performance of 
 
 ## DIRECTORY STRUCTURE
 
-`models` contains trained models with their `net.pth`, `optimizer.pth`, `scheduler.pth`, `net.pt`, and all other data saved in csv and json files. The directories also contain their own local copy of the scripts in which the hyperparameters, subparameters and file output names are set to correspond with the model in question. These local scripts are just (outdated) states of the scripts `SRHD_ML.ipynb` (or `SRHD_ML.py`) and  `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) that are found in the `src` directory; they provide the models as they were generated for the thesis.
+`models` contains trained models with their `net.pth`, `optimizer.pth`, `scheduler.pth`, `net.pt`, and all other data saved in csv and json files. The directories also contain their own local copy of the scripts in which the hyperparameters, subparameters and file output names are set to correspond with the model in question. These local scripts provide the models as they were generated for the thesis and are just (outdated) states of the scripts `SRHD_ML.ipynb` (or `SRHD_ML.py`) and  `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) that are found in the `src` directory.
 
-`src` is the directory in which one can experiment with creating new models. It has the the most up-to-date version of the scripts for SRHD and GRMHD. The SRHD script is itself an outdated version of the GRMHD script; it can be continued to be used independently from the GRMHD script, but it has more bugs than the GRMHD script. A listing of commit messages between the two from the original older repository of the project can be found in `<git_root>/addendum/commit_messages_SRHD_to_GRMHD`. 
+`src` is the directory in which one can experiment with creating new models. It has the the most up-to-date version of the scripts for SRHD and GRMHD. The SRHD script is itself an outdated version of the GRMHD script; it can be continued to be used independently from the GRMHD script, but it has more bugs than the GRMHD script. A listing of commit messages between the two from the original older repository of the project can be found in `addendum/commit_messages_SRHD_to_GRMHD.txt`. 
 
 C++ source code files are located in the `cpp` directories.
 
 ## INSTALLATION
+
+### Local machine
+
+1. Create a virtual environment in conda or python venv if desired.
+
+2. Run
+
+```sh
+pip install -r requirements.txt
+```
+
+Make sure torch is uncommented in the file.
+
+3. Follow _How to use this notebook_ at the top of the script in question.
 
 ### MMAAMS workstation
 
@@ -18,15 +32,20 @@ C++ source code files are located in the `cpp` directories.
 
 1. Clone the repository to the desired location.
 
-At the time of writing (Fri Jun 23 11:17:37 AM CEST 2023), Anaconda was required for a more recent python version. The version that was available on the MMAAMS workstation  downgraded PyTorch to a version incompatible with the `sm_86` architecture of the Nvidia RTX A6000 GPU of the workstation. Anaconda installs a sandboxed newer version of python such that PyTorch is not downgraded and `sm_86` architecture is supported. We hav confirmed the scripts to work well with the GPU on python version 3.11.3.
+At the time of writing (Fri Jun 23 11:17:37 AM CEST 2023), Anaconda was required to get a more recent python version running on the workstation. The version that was available on the MMAAMS workstation downgraded PyTorch to a version incompatible with the `sm_86` architecture of the Nvidia RTX A6000 GPU of the workstation. Anaconda installs a sandboxed newer version of python such that PyTorch is not downgraded in the environment and `sm_86` architecture is supported. We have confirmed the scripts to work well with the GPU on python version 3.11.3.
 
 2. [Install anaconda](https://pytorch.org/get-started/locally/#linux-anaconda)
 
 3. Setup a conda virtual environment
 
 ```sh
-conda create -n <env_name> python # Create a new env with the latest python version.
-#conda create -n wpa python=3.x.x # OR Create a new env with the specified python version.
+conda create -n <env_name> python
+```
+
+To setup with a specific version of python, run the following instead with `3.x.x` replaced by the desired version:
+
+```sh
+conda create -n wpa python=3.x.x
 ```
 
 4. Activate the environment
@@ -37,25 +56,25 @@ conda activate <env_name>
 
 Note that the environment must be activated every time to run the scripts.
 
-5. Install the required packages ([source](https://pytorch.org/))
+5. Install the required packages ([source of the command](https://pytorch.org/))
 
 ```sh
 conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
 ```
 
-6. Comment out `torch` in `<git_root>/requirements.txt` to prevent pip installation overriding the pytorch conda installation.
+6. Comment out `torch` in `requirements.txt` to prevent pip installation overriding the PyTorch installation via conda.
 
 7. Run
 
 ```sh
-pip install -r <git_root>/requirements.txt
+pip install -r requirements.txt
 ```
 
-8. Run the model in question by following _How to use this notebook_ at the top of the python script.
+8. Run the script for the model in question by following _How to use this notebook_ at the top of the python script.
 
 #### Installation for running model C++ scripts
 
-Running a model in C++ requires libtorch. At the time of writing (Fri Jun 23 11:17:52 AM CEST 2023), we could not get libtorch to work with the `sm_86` architecture of the Nvidia RTX A6000 GPU of the workstation, and so we ran it on the CPU only. These are the installation instructions for the latter procedure.
+Running a model in C++ requires libtorch. At the time of writing (Fri Jun 23 11:17:52 AM CEST 2023), we could not get libtorch to work with the `sm_86` architecture of the Nvidia RTX A6000 GPU on the workstation, and so we ran it on the CPU only. These are the installation instructions for the latter procedure.
 
 1. Download libtorch into the desired directory:
 
@@ -86,7 +105,7 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 1. Set `drive_folder` to save files to your desired google drive directory.
 2. Comment (not uncomment) the first line of the drive mounting cell.
 3. Comment (not uncomment) the first line of the `pip install` cell.
-4. Follow _How to use this notebook_ at the top of the script.
+4. The rest is the same as running locally, i.e. as in _Using the scripts on a local machine_.
 
 ### Using the scripts on (MMAAMS) workstation
 
@@ -97,7 +116,7 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 
 1. Follow _How to use this notebook_ at the top of the script.
 
-## TROUBLESHOOTING: Script installation and usage
+## TROUBLESHOOTING: Installation and usage
 
 ### Running models trained on the GPU on the CPU and vice versa
 
@@ -112,3 +131,7 @@ else:
 ```
 
 in the _Loading_ section of the script in question.
+
+### Running .py python files without having jupyter installed
+
+Comment out or remove the `get_ipython` lines from the `.py`  files when running on a system without jupyter installed.
