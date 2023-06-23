@@ -103,8 +103,8 @@ The executable can then be run with `./<executable name>`.
 Using either the SRHD or the GRMHD script on Google colab is straightforward: open the jupyter notebook file in Colab and 
 
 1. Set `drive_folder` to save files to your desired google drive directory.
-2. Comment (not uncomment) the first line of the drive mounting cell.
-3. Comment (not uncomment) the first line of the `pip install` cell.
+2. Comment (not uncomment) `%%script echo skipping` of the drive mounting cell.
+3. Comment (not uncomment) `%%script echo skipping` line of the `pip install` cell.
 4. The rest is the same as running locally, i.e. as in _Using the scripts on a local machine_.
 
 ### Using the scripts on (MMAAMS) workstation
