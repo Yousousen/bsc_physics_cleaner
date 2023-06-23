@@ -1,0 +1,54 @@
+07d3d23 Implemented GRMHD equations for the case of having a network that outputs the quantity `x = hW`, the latter output which I still have to implemetn.
+a3857b9 up a
+8d2b723 Merge branch 'main' of https://github.com/Yousousen/programming_git
+d160441 Uploaded Swapnil's C++ file
+f2af6f3 Merge branch 'main' of https://github.com/Yousousen/programming_git
+b000c85 Moved the check for the device tot he constants and flags to set section
+47d2fe4 Updated _How to use this noteook_. Generated script version
+5273a35 Calculating b^mu internally now. Yet to confirm correct operation in C++ again but I'm quite sure that it will still work fine.
+f7d2340 Fixed bug in OPTIMIZE having become lowercase in `create_model`
+0b0528f Added if-clauses to handle the case that we are loading the input data and labels from csv files in which case we should not do any visualization of the primitive variables.
+ac42515 up a
+8247694 up duo
+2ac2b88 Confirmed that the model can still train properly. The test norm errors remain to be below the train norm errors. I will now venture into loading the data from a csv file.
+139a514 Confirmed correct operation of the c++ code with the eight input parameters version of the code.
+784288a Fixed the issue; I had to unsqueeze the input. The problem further lied in that I was simply skipping the cell that runned the same thing for `net`. I have yet to reconfirm the C++ part which I will do on arch.  I will next fix the assertion error by squeezing the input in _Porting to C++_ and I will make sure that I do a similar unsqueeze in C++.
+a0537b1 Trying to find out why net_loaded(input) does not work
+3567497 Uploaded another set of abhorted optuna runs
+e2c4ec4 Completed the modification of the equations and the addition of the three magnetic field inputs---at least using dummy sampling intervals [0,1] for B^k and b^mu. Changed MSE plot to plot loss_name instead.
+d3855e5 up tb
+9f9fbdc Adjusted the rest of the code for the addition of the GR magnetic field primitives and thereby conservative variables. Removed remaining NAN_TO_NUM if-block. Now we are to change all the equations to those found in Gram-x. The code is now ready for the addition of the GRMHD equations. The next step is to add the GRMHD equations and then test the code.
+3db19bb Changing the equations according to Gram-X. Changed the magnetic field to be last as in Gram-X; this entails changing the order of arguments to the data generation code and to the return valeus of the functions. I likewise moved epsilon to the front. Tau I kept at the place it is for correspondence with Gram-X. I have yet to continue editing the equations and have to propagate through the changes beyond the definitons of the functions too.
+ce20228 Merge branch 'main' of https://github.com/Yousousen/programming_git
+ab5bac1 Added in magnetic field which is being sampled uniformly on `[0,1]` in all directions until I find a better value for it. Changed old `gamma` to `Gamma` so that I can add new `gamma` the determinant of `gamma_ij`. Note that at this point I still need to adjust the equations from the form of Dieselhorst et al. to the form of Gram-X.
+c9d06ee Added abhorted hyperparameter optimization runs for five parameters.
+cc4df01 Added GRMHD pt1
+980d3da Removed remaining NAN_TO_NUM cell.
+3c52bff Set `N_TRIALS=150`based on the suggestion by GPT4 to start between 100 and 200 trials.
+e7aca2b Added first part of the discussion with Claude+. I am now ready to do hyperparameter tuning on Colab again.
+2acf127 Search parameter optimization with a combination of suggestions from GPT4 and Claude+ and reducing the number of epochs for a process
+a2460c5 Trying to fine tune the search space using AI; up a
+1b6f140 Replaced the method of counting the number of parameters with that of GPT4
+d867a53 Added section to count the number of parameters of the network.
+da95ea3 Merge branch 'main' of https://github.com/Yousousen/programming_git
+b1fdcef I forgot what I did
+aff2bec Updated _How to run this notebook_ section and removed all the nan values handling.
+33b9234 Uploaded _debugging_nan_pt2_ chat files
+56e1a3d Inclusion ofthe  three-dimensional velocity, without nan-values afaik. If this is indeed so,  I can continue to remove the nan-value handling code, and I can continue to neglect the ca2_nan_fixed code of colab. Now as we can see in the output of `conversion_attempt_2.ipynb`, the same hyperparameters give an error that is worse, and we envision that we have to retrain the model. This we will do next, and then we continue on with the work of _Meeting notes_ (2023-05-17 16:48:54). While we are at it, or after it, or before it, whatever works, we remove the nan-value handling code that we created, and continue. We have removed SMALL_CONSTANT from the equation already.
+a3d6bb6 Added plotting in the case of NAN_TO_NUM to `conversion_attempt_2.ipynb`
+5854449 Fixed plotting of input data for the case that device is not the CPU.
+1cc0b7b `torch.nan_to_num` fixes the nan issue, but is it appropriate to use it?
+76291f9 up a
+f78b663 up a
+564aa49 This is a checkpoint before I attempt to remove nan and inf values that I get from the tensors upon z-score normalization or upon training
+e0b6e97 Added more config interactive shell statements
+044993d Set the drive folder
+ef6b701 Merge branch 'main' of https://github.com/Yousousen/programming_git
+ea4925e Added `v_y` and `v_z` and thereby `S_y` and `S_z` through the equation and thereby changed the number of input to the network from 3 to 5.
+652e979 Added conversion attempt 2 and attempt 3 pt1 chats
+9e9970e Added updated version of the chat
+09534a8 Created directory and file for second attempt (with AI, I also attempted by myself first time around) at using a velocity in three dimensions.
+b2de880 Deleted test files
+a32ac8e Trouble recognizing new directories on tb.
+cbc0e32 Added new directory for the AI version of adding vx, vy, vz
+8cee288 Created directory `con2prim_towards_GRMHD`. I went to implement the steps of adding vy and vz myself up to the plot of the input data before normalization, which I didn't finish. I now decide to let AI do the task for me instead.
