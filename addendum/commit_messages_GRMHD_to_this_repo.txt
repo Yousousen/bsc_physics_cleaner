@@ -1,0 +1,139 @@
+d08b78b Created optimization history csv files. I next want to increment the number by 1 so that the trials start at 1
+ac759a2 Corrected the names of the csv files
+55c36ad Saving test and train metrics of the NNSR models for plotting with Tikz / pgfplots. The NNGR models I don't have on github due to file size
+e8dc21a Created scripts of the NNSR1-4 runs
+3c9a6ad I tried to add the workstation test run but the commit was too big. I removed it again
+c1208ac Fixed accidental `var_dict` instead of `var_dict_loaded`
+55d39ec Corrected `STUDY_NAME is not None` to check whether OPTIMIZE or `LOAD_PREVIOUS_STUDY` is `True`
+8c54f48 Added subparameter constants for the case of Adam optimizer and StepLR scheduler
+76ccfed Merge branch 'main' of https://github.com/Yousousen/programming_git
+b082142 I don't think anything important was changed
+c029e2f Merge branch 'main' of https://github.com/Yousousen/programming_git
+a2230ba Created new script version
+19ccae1 Added today's failed Colab runs
+39d6a4c Changed the search parameter space after the research of today
+ba9512e Decreased the batch size to maximally 512.
+c77c0af Merge branch 'main' of https://github.com/Yousousen/programming_git
+52e251e Changed the skipping of celll
+227e824 Set n layers lower bound to 1 in GRMHD_ML
+b6613d3 Added some abhorted batches
+c44936a Added 03-06-23 abhorted batches
+fe930d7 Createrd new python script from the notebook which I will run on the MMAAMS workstation
+8c25ed4 Added many files of the batches of runs
+804d1b7 I plot everything except contour plot for now
+4dcba40  Still testing the plotting functions, but I quickly push as my vscode is dying on arch
+77a1073 Testing callback plotting with Optuna
+fa6036e Reimplemented plotting in the callback
+176ba4c Implemented callback for saving trial information. What I will now do is test on colab if plotting while trials are running with plotly works there
+d976529 Running colab run 3 to 9, if I'm correct, with additions from previous commit. I run on arch now to see it if it gets through the night with the keep alive script.
+a29a36e Merge branch 'main' of https://github.com/Yousousen/programming_git
+b8a9af7 Added saving and loading of optuna study for plotting once we can in fact do that; we need to fix the plotly error for that. I tried both the db method and the pkl method, but the db method does not currectly work. The pkl method does work.
+f7878af Added abhorted runs batch 2
+691c4eb Merge branch 'main' of https://github.com/Yousousen/programming_git
+a375d45 Added 1e5 timed out runs
+52fa442 up tb
+8c02697 Actually as I will continuously commit from my PCs, I do have to set the skipping of the two colab cells after all
+21e17c8 Updated the notebook some more for more easily running in colab
+4785a3d Set some constants in preperation for another colab run.
+826d27b Updated the learning rate search space based on the nan-value-analysis of GPT4
+7a92794 Uploaded nan-value-analysis chat files
+3912b07 Merge branch 'main' of https://github.com/Yousousen/programming_git
+08736cb up tb
+b972842 Some updates on the optuna data format.
+428d933 Data files for the 1e{5,6}_run{1,2}
+3464541 Working to scientific script and thinking about how I should analyse my Optuna data
+19bf843 up a
+5e7b687 Merge branch 'main' of https://github.com/Yousousen/programming_git
+bdaafc3 Tried to create a program to convert the real numbers to a scientific format, but both versions currently don't work; see the comments in the notebook.
+5b85455 Uploaded the abhorted runs 1e6 run 2 and 1e5 run 2
+24c7b9d Uploadedthe correct version of 1e5_run1.ipynb which shows all the Optuna output.
+a3dac32 Added 'thesis way' of plotting the data; although I commented out the high dpi setting.
+70fcc0d Added the hyperparameter optimization runs 1e6_run1, which was abhorted, and 1e5_run1, which was completed. I have accidentally overwritten the data generation files for 1e5_run1; however this doesn't matter as I can regenerate it; the random seed is still set the same. But I don't expect to need to do this in any case, I have all the saved data like the `.pth` files and the `var_dict` anyhow
+27e6215 Removed 'Added quantile loss' comment. Set no optimization scheduler to something other than the removed CycleLR
+151eb8f Corrected the name for 00199.ipynb plots
+5134e25 Created plots for NNSR1-4
+2c76108 Fiddling aroudn withthe figures in Dieselhorst run 5
+9033775 Was fidling around with Dieselhorst run 4 run 5 run 6 NNC2PL run and 0027 run; adding plots and show cases of the test metric errrors; i.e. the l1 and linf norms
+046010d Correction on the last commit; I had run NNCPL run again, not Dieselhorst run 4
+0f69a31 Ran Dieselhorst_run_4.ipyn again
+1acef8c Created a new notebook `GRMHD_ML.ipynb` to do our work in.
+2e4840a Removed CyclicLR as an option for now as it limits the type of optimizer that we can use. I don't currently see the advantage. This resolves the issue as was highlighted in tryout.ipynb
+71de022 Added the Colab run with 1e5 number of samples and corrected the tryout.ipynb file by removing accidentally inputted characters.
+45398c4 Once again fixed bugs in the loading of hidden functions
+d8ec6c3 Added another missing activation function in the loading section GELU
+243009d Added missing activation functions in loading
+4bf1ff8 In the process of resolving hte cycle_momentum ValueError that I discovered during my Colab run.
+4c70d3a Confirmed correct operation of the C++ code except for a 1e-4 difference in the output tensor, interestingly. Could it just be due to the way rounding is handled in the languages or by something like std::cout?
+790a265 Made some small adjustments such as accounting for the scheduler being none in a testing cell after loading.
+d6ee545 I arbitrarily  increase the number of samples to a million. As my data set size increased, I use the heuristic 70 / 15 / 15 split for the training, validation, and test sets respectively. I also use the same random seed for the split to ensure reproducibility.
+a29d427 We see in our After_dropout runs that we can have huge losses and metrics, and that we can even have nan values, which are, Optuna reports, in the input tensors. Does Optuna in any way influence the input? Or does it select variables that don't pass our three conditions? Or is it just the metric that gets too big? Well, it is not a value of infinity. We could have just a case of having to narrow down the search space.  It is notable that the run with the old hyperparameters shows values that are large compared to the Dieselhorst runs, but not insane.
+2280295 Minor adjustments
+a55461c Cleared confusion on n_layers and n_units; in short, they both refer to the hidden layers. Deleted accidental duplication of part of the loading code. Added missing dropout_rate return unpacking in the objective function. Without optimization the code runs fully. I will now confirm whether the code runs fully with optimization. I will then see if the cpp code still runs well. After that, we can increase the data by 30 fold and see if things still run at a tractable pace. Finally, we can tune the hyperparameters for the final model.
+245eac2 In the process of fixing dropout
+ac1e0e9 Merge branch 'main' of https://github.com/Yousousen/programming_git
+b5dcd58 Implemented dropout. Added taking the first element of `hidden_activation.__class__.__name__` and ditto for output activation in the case that these are lists instead of strings; I had accidentally added this to the `After_validation_set.ipynb`. Currently fixing an issue with dropout with GPT4
+e444881 Added to Saving section loading of the first item of the hidden and output activation in case it is a list otherwise just load it as is.
+241df94 Made some corrections to the saving and loading of parameters and subparameters. (EDIT The following former thing that I do is no longer needed in either the saving or the loading and I don't do it any longer. I do not know why I needed it for a moment) I.a. in particular I select the first (and only) element from the list of hidden and output activations now, and I do something similar for the scheduler subparameters. Witht his commit I finished the adding of activations and subparameters for some of them. Earlier results on training only are wrong as I applied ReLU to the output. I note that I explicitly confirmed correct loading of the LeakyReLU slope subparameter.
+3aa6e97 In the process of adding hidden activations and subparameters for some hidden activations
+3499f3e I had accidentally corrected `epsilon` in `With_loading_from_csv.ipynb` instead of in `pt1_before_restructuring.ipynb`. It is now rectified.
+2a44e16 Now doing proper sampling in log space of epsilon.
+7fa4c13 Confirmed the correct and quick running of the code in Colab when Optimization, and ditto for training without optimization which I tested in vscode. nan values don't appear, and although the loss is great, the code seems to be running fine. In the training without optimization run I also confirmed []. In both cases the code could run successfully to the end too.
+d06ae5e Nan-values have disappeared, even though I used the same `random.seed` (I have incremented the random seed that I used by 1 in this commit however). I further had set the code to load from the csv files, which appears to work fine thus far. However, optimization is incredibly slow now, and I will try such a run on Colab. I set load from csv back to false for the Colab run.
+49bcd83 Implemented validation set, but there is a return of nan-values appearing during hyperparameter tuning
+15797cc Confirmed code can still run up to hyperparameter optimization. Currently implementing validation set.
+a777271 Changed back `N_TRIALS = 150` and `N_EPOCHS_NO_OPT = 500`; but I still need to perform a test run.
+5c908fe Removed the option of having sigmoid or tanh output, as these would squash the output to a range of 0 to 1 or -1 to 1, which is undesired. We have a regression problem with a continuous output, so we want the output to be unbounded.
+359b4fa Changed back `n_train_samples` and `n_test_samples` to 80000 and 20000 respectively.
+300ac13 Implemented most of the hyperparameter search space suggestsions from GPT4. I will first see if the code still runs, and then I will probably implement early stopping alongside pruning and the regularization method of dropout.
+4c956d3 Implementing the changes suggested by GPT4
+7fe88c9 up tb. When we come back from the gym we will search for an appropriate hyperparameter space with GPT4.
+71079eb up tb after accidentally switching to win 11
+a3e603b I'm done analysing the plots, as they look fine to me. I set `OPTIMIZE=True`, `N_EPOCHS_NO_OPT=400`, `N_TRIALS=100` (for now), and set back `n_train_samples=80000` and `n_test_samples=20000`, and `epsilon_interval = (1e-2, 2000)` I will now continue on to use GPT4 to find a good search space for my hyperparameters.
+d3e4e99 Analysing input data plots now
+095a65c Debugging `epsilon_train` plotting with ChatGPT4. Note that I have changed the upper endpoint, and the training and test dataset sizes.
+fc67093 restored pt1_before_restructuring.ipynb from not opening on tb
+63a88b6 Merge branch 'main' of https://github.com/Yousousen/programming_git
+70ad761 up tb
+d160961 Debugging the plot of `epsilon_train`
+710689d Generated output.png which I will try to analyse with Bing
+006781c I was debugging what slowed down my notebook. It wasn't the vim extension; the neovim extension was just as slow. Rather, clearing all outputs removed the input lag as far as I see now. In fact, clearing the outputs made vscode altogether fast.
+f78751b I don't remember what I did; probably an unimportant rerun or checking. I was most likely just observing and contemplating the plots.
+1ab6b1f Merge branch 'main' of https://github.com/Yousousen/programming_git
+fec50d7 Changed xscale to log on the plotting of `y_train` and `y_test`. Noted that with `torch.any`, the labels are always positive. It is of interest to try different random seeds and see if this stays so.
+693e049 Added old_hyperparameters_test3 with loading csv.
+c0eef12 Changed plotting vertical axis scale to log for epsilon and added the option to have horizontal axis log scale or vertical axis log scale or both in `plot_histograms`. I am now analyzing the plots _Primitive variables and metric_
+f6a052e Updated the notion of 'primitive variables' to 'primitive variables and metric' where appropriate in code and in comments.
+50f828b Another colab preparation
+c61fbeb Adjusted upper and lower bound of the epsilon interval so that we now have `[1e-2,2000]` and made the log sampling a one liner. Note the intuition behind this. To sample (uniformly) in logspace means to take first the logarithm of the interval and then sample in there; the result of which we convert back by exponentiation again as that is the original scale of epsilon.
+41e1b00 Added log space chat
+9a3f50a Changed the logarithmic interval sampling for epsilon which I push for another test run on colab.
+cec76a7 Added old_hyperparameters_test from colab and its files showing that the NN is  running what looks like to be valid. I still have to explore some details as we find them in the TODOs.
+a2e2269 Aded saving for colab of the generated data .
+60734d8 Created a version to test on Colab with.
+f680456 Loading from csv files still works
+54f03a9 Removed nan-debugging code and the old commented code that moved quantities directly from being a scalar to a torch tensor without first converting to a numpy array. I also removed the TODO on the intervals. I further changed the commented out gamma_det and betax, betay, betz, alpha.
+bd5ec65 Adjusted labels to no longer be pressure but the quantity x = hW instead.
+3f24f77 I can run the entire code now, but I noticed that after the evaluating of the model I just get an input of tensors with values of 0. I have to check that out. I further have to check out whether the code above it works properly. In any case, to save the state, I was implementing resampling. For more, see the TODOs in the section _ I can run the entire code now, but I noticed that after the evaluating of the model I just get an input of tensors with values of 0. I have to check that out. I further have to check out whether the code above it works properly. In any case, to save the state, I was implementing resampling. For more, see the TODOs in the section _ I can run the entire code now, but I noticed that after the evaluating of the model I just get an input of tensors with values of 0. I have to check that out. I further have to check out whether the code above it works properly. In any case, to save the state, I was implementing resampling. For more, see the TODOs in the section _Meeting notes with Swapnil on working towards the I can run the entire code now, but I noticed that after the evaluating of the model I just get an output of tensors with values of 0. I have to check that out. I further have to check out whether the code above it works properly. In any case, to save the state, I was implementing resampling. For more, see the TODOs in the section _Meeting notes with Swapnil on working towards the final works_.
+9b7daba Split the sampling and generating data cells because the sampling can take long with the resampling now while I had an error occuring in `generate_input_data`
+7aabc4b up a
+9f66293 Implemented resampling until the three conditions for non-nan values are met. Currently getting an assertion firing on the shape of rho and epsilon not being the same. I also had a warning of conversion from a list to a tensor being very slow, which is something I want to mitigate later; hence the commit.
+da5d67c up a
+b779980 I have obtained new ranges from Swapnil. I have furthermore set the number of training samples to 20k on Swapnil's request and based on the fact that 80% / 20% is a common fraction for training and test. With these ranges, we still obtain nan-values from `wtemp`, but no longer from `sdet`. To eliminate the remaining nan-values, we simply resample like we do for the velocities.
+9e5c188 Created an interval in which non of the input tensors (and label tensors) contain nan values.
+374bc61 We cannot have  `gij_interval` being equal intervals either; `sdet produces  a negative number under the square root in the case.
+a26c568 Reducing only `gamma_ij`, this is about as good as I can make the intervals while avoiding nan-values. Also, I asked Swapnil what is a good value for `1e-9` to avoid log of zero.
+191ae2f Located nan probabls to be in the intervals as 37k of the combinations produce negative square roots
+736dd92 Locating nan
+dc78a55 Debugging nan-values.
+3d12644 up tb
+6db65d1 Implemented changes in the intervals. This stll produces nan values as expected.
+82f79db As suspected in the previous commit, I still had manifold changes to make. I have made these miscellaneous changes so that the code is running well again. I also updated the code in the _Evaluation ..._ section.
+d1e72f4 Added pre-restructuring code, which runs fine until _Evaluating the network_ in which I still have to make an adjustment, but with nan values as expected. I might want to additionally check the equation calculations to ensure that it is the same as the post
+47480bc Adjusting the sampling intervals and removing invalid velocity values. But I will create another file to look back at the old version before the restructuring to ensure tha tthe new sampling intervals don't work for that code either. Then I can return here to debug the code.
+823ac65 Removed the notion of `c` as we assume `c=1`.
+f90eb6a Restructuring the code. It currenty runs, but it produces nan values due to incorrect interval settings.
+dfef949 Restoration of the corrupted pt1.ipynb
+21aff28 Removed corrupted pt1.ipynb
+aae720a issues with pt1.ipynb being in a broken state on arch.
+3822886 up tb
+07d3d23 Implemented GRMHD equations for the case of having a network that outputs the quantity `x = hW`, the latter output which I still have to implemetn.

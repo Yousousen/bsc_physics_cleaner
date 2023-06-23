@@ -1,0 +1,1 @@
+The `commit_messages` txt files in this directory serve as a history of major changes that were made in the old repository of the project. We created the new repository `bsc_physics_cleaner` in which we cleaned up directories and files of the old repository.

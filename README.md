@@ -4,9 +4,9 @@ Repository for BSc. Physics and Astronomy project: Improving the Performance of 
 
 ## DIRECTORY STRUCTURE
 
-`models` contains trained models with their `net.pth`, `optimizer.pth`, `scheduler.pth`, `net.pt`, and all other data saved in csv and json files. The directories also contain their own local copy of the scripts in which the hyperparameters, subparameters and file output names are set to correspond with the model in question. These local scripts provide the models as they were generated for the thesis and are just (outdated) states of the scripts `SRHD_ML.ipynb` (or `SRHD_ML.py`) and  `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) that are found in the `src` directory.
+`models` contains trained models with their `net.pth`, `optimizer.pth`, `scheduler.pth`, `net.pt`, and all other data saved in csv and json files. The directories also contain their own local copy of the scripts in which the hyperparameters, subparameters and file output names are set to correspond with the model in question. **These local scripts provide the models in their states as they were generated for the thesis and are outdated** states of the scripts `SRHD_ML.ipynb` (or `SRHD_ML.py`) and  `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) that are found in the `src` directory. They are outdated in having bugs that are fixed later on and in having outdated comments (see `addendum/`).
 
-`src` is the directory in which one can experiment with creating new models. It has the the most up-to-date version of the scripts for SRHD and GRMHD. The SRHD script is itself an outdated version of the GRMHD script; it can be continued to be used independently from the GRMHD script, but it has more bugs than the GRMHD script. A listing of commit messages between the two from the original older repository of the project can be found in `addendum/commit_messages_SRHD_to_GRMHD.txt`. The `model` files may also have outdated comments.
+`src` is the directory in which one can experiment with creating new models. It has the the most up-to-date version of the scripts for SRHD and GRMHD. **The SRHD script is itself an outdated version of the GRMHD script**; it can continue to be used independently from the GRMHD script, but it has more bugs than the GRMHD script. A listing of commit messages between the two from the original older repository of the project can be found in `addendum/commit_messages_SRHD_to_GRMHD.txt`. For continuation of the project, we advise to just continue to edit the script `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) and keep track of significant states of the script, e.g. optimizing with such and such parameters, in some other way, and to implement an easy way to load different states quickly.
 
 C++ source code files are located in the `cpp` directories.
 
@@ -15,6 +15,8 @@ C++ source code files are located in the `cpp` directories.
 ### Local machine
 
 1. Create a virtual environment in conda or python venv if desired.
+
+#### Installation for the python scripts
 
 2. Run
 
@@ -26,9 +28,17 @@ Make sure torch is uncommented in the file.
 
 3. Follow _How to use this notebook_ at the top of the script in question.
 
+#### Installation for the C++ scripts
+
+If a GPU is available, one can follow the steps as listed under _MMAAMS workstation_, _Installation for the C++ scripts_, but choose a cuda-enabled distribution of libtorch instead, otherwise follow the same procedure.
+
+### Colab
+
+See _Using the scripts on Google Colab_.
+
 ### MMAAMS workstation
 
-#### Installation for running model python scripts
+#### Installation for the python scripts
 
 1. Clone the repository to the desired location.
 
@@ -72,7 +82,7 @@ pip install -r requirements.txt
 
 8. Run the script for the model in question by following _How to use this notebook_ at the top of the python script.
 
-#### Installation for running model C++ scripts
+#### Installation for the C++ scripts
 
 Running a model in C++ requires libtorch. At the time of writing (Fri Jun 23 11:17:52 AM CEST 2023), we could not get libtorch to work with the `sm_86` architecture of the Nvidia RTX A6000 GPU on the workstation, and so we ran it on the CPU only. These are the installation instructions for the latter procedure.
 
@@ -84,7 +94,7 @@ wget https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-2.0.1%2
 
 2. Unzip the downloaded zip file.
 
-The next step requires the `CMakeLists.txt` file to be set up, which we have already done for all scripts. However, if problems are encountered, consult [the pytorch documentation](https://pytorch.org/cppdocs/installing.html), which was used to create the `CMakeLists.txt` files.
+The next step requires the `CMakeLists.txt` file to be set up, which we have already done for all scripts. However, if problems are encountered, consult [the pytorch documentation on using torch in C++](https://pytorch.org/cppdocs/installing.html).
 
 3. As found in the _How to use this notebook_ section in the scripts, building can be done with
 
@@ -96,9 +106,9 @@ cmake --build . --config release
 
 The executable can then be run with `./<executable name>`.
 
-## Using the scripts on different systems
+## USING THE PYTHON SCRIPTS
 
-### Using the scripts on Google Colab
+### Running the python on Google Colab
 
 Using either the SRHD or the GRMHD script on Google colab is straightforward: open the jupyter notebook file in Colab and 
 
@@ -107,16 +117,23 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 3. Comment (not uncomment) `%%script echo skipping` line of the `pip install` cell.
 4. The rest is the same as running locally, i.e. as in _Using the scripts on a local machine_.
 
-### Using the scripts on (MMAAMS) workstation
+### Running the scripts on (MMAAMS) workstation
 
 1. If there is no access to a jupyter environment, use the `.py` version of the script instead.
 2. Follow _How to use this notebook_ at the top of the script.
 
-### Using the scripts on a local machine
+### Running the scripts on a local machine
 
 1. Follow _How to use this notebook_ at the top of the script.
 
-## TROUBLESHOOTING: Installation and usage
+### Evaluating an ANN model
+
+Evaluating of an artificial neural network model can be done with `torch.cuda.Event`. This is illustrated `model/NNGR{1,2}/NNGR{1,2}_evaluation.py`. The relevant code is:
+
+```python
+```
+
+## TROUBLESHOOTING: INSTALLATION AND RUNNING
 
 ### Running models trained on the GPU on the CPU and vice versa
 
@@ -134,4 +151,4 @@ in the _Loading_ section of the script in question.
 
 ### Running .py python files without having jupyter installed
 
-Comment out or remove the `get_ipython` lines from the `.py`  files when running on a system without jupyter installed.
+Make sure that the  `get_ipython` lines in the `.py` files are commented out when running these files on a system without jupyter installed.
