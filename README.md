@@ -29,3 +29,38 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 ### Using the scripts on a local machine
 
 1. Follow _How to use this notebook_ at the top of the notebook as usual.
+
+## Installation
+
+### MMAAMS workstation
+
+#### Running the python scripts
+
+1. Clone the repository to the desired location.
+
+At the time of writing, Anaconda was required for a more recent python version. The version that was available on the MMAAMS workstation  downgraded PyTorch to a version incompatible with the `sm_86` architecture of the RTX A6000 GPU of the workstation. Anaconda installs a sandboxed newer version of python such that PyTorch is not downgraded and `sm_86` architecture is supported. We hav confirmed the scripts to work well with the GPU on python version 3.11.3.
+
+2. [Install anaconda](https://pytorch.org/get-started/locally/#linux-anaconda)
+
+3. Setup a conda virtual environment
+
+```sh
+conda create -n <env_name> python # Create a new env with the latest python version.
+#conda create -n wpa python=3.x.x # OR Create a new env with the specified python version.
+```
+
+4. Activate the environment
+
+```sh
+conda activate <env_name>
+```
+
+Note that the environment must be activated every time to run the scripts.
+
+5. Install the required packages ([source](https://pytorch.org/))
+
+```sh
+conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
+```
+
+Note that this eliminates the need to `pip install -r requirements.txt` as the required packages are now installed via conda instead.

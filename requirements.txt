@@ -1,0 +1,16 @@
+ipython
+ipykernel
+ipywidgets
+jupyter
+ipython_unittest
+numpy
+pandas
+matplotlib
+torch
+optuna
+optuna[visualization]
+plotly
+tensorboard
+tensorboardX
+torch-tb-profiler
+scikit-learn
