@@ -1,0 +1,1 @@
+{"batch_size": 512, "n_epochs": 500, "loss_name": "MSE", "optimizer_name": "Adagrad", "scheduler_name": "ReduceLROnPlateau", "n_units": [900, 113, 1440, 478, 3328], "n_layers": 5, "hidden_activation_name": "PReLU", "output_activation_name": "Identity", "lr": 0.00011087958821070323, "dropout_rate": 0.4666513907706338, "prelu_init": 0.1733863204717636}
