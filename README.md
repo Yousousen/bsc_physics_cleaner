@@ -19,26 +19,26 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 1. Set `drive_folder` to save files to your desired google drive directory.
 2. Comment (not uncomment) the first line of the drive mounting cell.
 3. Comment (not uncomment) the first line of the `pip install` cell.
-4. Follow _How to use this notebook_ at the top of the notebook as usual.
+4. Follow _How to use this notebook_ at the top of the script.
 
 ### Using the scripts on (MMAAMS) workstation
 
 1. If there is no access to a jupyter environment, use the `.py` version of the script instead.
-2. Follow _How to use this notebook_ at the top of the notebook as usual.
+2. Follow _How to use this notebook_ at the top of the script.
 
 ### Using the scripts on a local machine
 
-1. Follow _How to use this notebook_ at the top of the notebook as usual.
+1. Follow _How to use this notebook_ at the top of the script.
 
 ## Installation
 
 ### MMAAMS workstation
 
-#### Running the python scripts
+#### Installation for running model python scripts
 
 1. Clone the repository to the desired location.
 
-At the time of writing, Anaconda was required for a more recent python version. The version that was available on the MMAAMS workstation  downgraded PyTorch to a version incompatible with the `sm_86` architecture of the RTX A6000 GPU of the workstation. Anaconda installs a sandboxed newer version of python such that PyTorch is not downgraded and `sm_86` architecture is supported. We hav confirmed the scripts to work well with the GPU on python version 3.11.3.
+At the time of writing, Anaconda was required for a more recent python version. The version that was available on the MMAAMS workstation  downgraded PyTorch to a version incompatible with the `sm_86` architecture of the Nvidia RTX A6000 GPU of the workstation. Anaconda installs a sandboxed newer version of python such that PyTorch is not downgraded and `sm_86` architecture is supported. We hav confirmed the scripts to work well with the GPU on python version 3.11.3.
 
 2. [Install anaconda](https://pytorch.org/get-started/locally/#linux-anaconda)
 
@@ -63,4 +63,16 @@ Note that the environment must be activated every time to run the scripts.
 conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
 ```
 
-Note that this eliminates the need to `pip install -r requirements.txt` as the required packages are now installed via conda instead.
+6. Comment out `torch` in `<git_root>/requirements.txt` to prevent pip installation overriding the pytorch conda installation.
+
+7. In `<git_root>`, run
+
+```sh
+pip install -r requirements.txt
+```
+
+8. Run the model in question by following _How to use this notebook_ at the top of the python script.
+
+#### Installation for running model C++ scripts
+
+Running a model in C++ requires libtorch. At the time of writing, we could not get libtorch to work with the `sm_86` architecture of the Nvidia RTX A6000 GPU of the workstation, and so we ran it on the CPU only. These are the installation instructions for the latter procedure.
