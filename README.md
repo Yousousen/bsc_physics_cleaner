@@ -127,6 +127,7 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 1. Follow _How to use this notebook_ at the top of the script.
 
 ### Evaluating an ANN model
+test
 
 Evaluating of an artificial neural network model can be done with `torch.cuda.Event`. This is illustrated `model/NNGR{1,2}/NNGR{1,2}_evaluation.py`. The relevant code is:
 
