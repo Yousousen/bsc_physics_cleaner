@@ -14,11 +14,13 @@ C++ source code files are located in the `cpp` directories.
 
 ### Local machine
 
-1. Create a virtual environment in conda or python venv if desired.
+1. Clone the repository to the desired location.
+
+2. Create a virtual environment in conda or python venv if desired.
 
 #### Installation for the python scripts
 
-2. Run
+3. Run
 
 ```sh
 pip install -r requirements.txt
@@ -26,14 +28,18 @@ pip install -r requirements.txt
 
 Make sure torch is uncommented in the file.
 
-3. Follow _How to use this notebook_ at the top of the script in question.
+4. Follow _How to use this notebook_ at the top of the script in question.
 
 #### Installation for the C++ scripts
 
 If a GPU is available, one can follow the steps as listed under _MMAAMS workstation_, _Installation for the C++ scripts_, but choose a cuda-enabled distribution of libtorch instead. The rest of the procedure is the same.
 ### Colab
 
-See _Using the scripts on Google Colab_.
+1. Open the github repository in Google Colab.
+
+2. Create a copy of the jupyter notebook file that one wants to run so that one is able to save changes.
+
+3. Continue with _Using the scripts on Google Colab_.
 
 ### MMAAMS workstation
 
