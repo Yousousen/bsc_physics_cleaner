@@ -2172,10 +2172,10 @@ traced_model = torch.jit.trace(net_loaded, dummy_input)
 traced_model.save("net.pt")
 save_file("net.pt")
 
-example_input_to_validate_correct_export_and_import = generate_input_data(*generate_samples(1))
-print("input shape: ", example_input_to_validate_correct_export_and_import.shape)
-print("input: ", example_input_to_validate_correct_export_and_import)
-print("Output:", net_loaded(example_input_to_validate_correct_export_and_import))
+example_input = generate_input_data(*generate_samples(1))
+print("input shape: ", example_input.shape)
+print("input: ", example_input)
+print("Output:", net_loaded(example_input))
 
 print("MODEL CALL EVALUATION")
 
@@ -2184,7 +2184,7 @@ print("MODEL CALL EVALUATION")
 
 # Ensure that your model and input data are on the same device (GPU in this case)
 model = net_loaded.to('cuda')
-input_data = example_input_to_validate_correct_export_and_import.to('cuda')
+input_data = example_input.to('cuda')
 
 start_event = torch.cuda.Event(enable_timing=True)
 end_event = torch.cuda.Event(enable_timing=True)

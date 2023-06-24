@@ -127,12 +127,29 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 1. Follow _How to use this notebook_ at the top of the script.
 
 ### Evaluating an ANN model
-test
 
-Evaluating of an artificial neural network model can be done with `torch.cuda.Event`. This is illustrated `model/NNGR{1,2}/NNGR{1,2}_evaluation.py`. The relevant code is:
+Evaluating of an artificial neural network model can be done with `torch.cuda.Event`. This is illustrated at the end of `model/NNGR{1,2}/NNGR{1,2}_evaluation.py`. The relevant code is:
 
 ```python
+example_input = generate_input_data(*generate_samples(1))
+
+# Ensure that your model and input data are on the same device (GPU in this case)
+model = net_loaded.to('cuda')
+input_data = example_input.to('cuda')
+start_event = torch.cuda.Event(enable_timing=True)
+end_event = torch.cuda.Event(enable_timing=True)
+
+start_event.record()
+output = model(input_data)
+end_event.record()
+torch.cuda.synchronize() # Wait for the events to be recorded
+
+print(f"Evaluation time: {start_event.elapsed_time(end_event)} milliseconds")
 ```
+
+### Other scripts in the model directory
+
+The `model/NNGR2` directory moreover has the `NNGR2_train.py` and the `NNGR2_optimization.py` scripts. These are just scripts in which `OPTIMIZE` is set to `False` and `True` respectively, and, together with other settings and hyperparameters set as can be found in the file, are used to test the training or optimization process of an arbitrary model easily on the workstation without having to open the same file and editing it many times to switch between no optimization and optimization.
 
 ## TROUBLESHOOTING: INSTALLATION AND RUNNING
 
