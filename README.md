@@ -91,7 +91,7 @@ pip install -r requirements.txt
 
 Running a model in C++ requires libtorch. At the time of writing (Fri Jun 23 11:17:52 AM CEST 2023), we could not get libtorch to work with the `sm_86` architecture of the Nvidia RTX A6000 GPU on the workstation, and so we ran it on the CPU only. These are the installation instructions for the latter procedure.
 
-1. Download libtorch into the desired directory:
+1. Download libtorch into the desired directory ([see pytorch documentation for the latest version](https://pytorch.org/cppdocs/installing.html))
 
 ```sh
 wget https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-2.0.1%2Bcpu.zip
