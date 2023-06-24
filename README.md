@@ -30,8 +30,7 @@ Make sure torch is uncommented in the file.
 
 #### Installation for the C++ scripts
 
-If a GPU is available, one can follow the steps as listed under _MMAAMS workstation_, _Installation for the C++ scripts_, but choose a cuda-enabled distribution of libtorch instead, otherwise follow the same procedure.
-
+If a GPU is available, one can follow the steps as listed under _MMAAMS workstation_, _Installation for the C++ scripts_, but choose a cuda-enabled distribution of libtorch instead. The rest of the procedure is the same.
 ### Colab
 
 See _Using the scripts on Google Colab_.
