@@ -6,7 +6,7 @@ Repository for BSc. Physics and Astronomy project: Improving the Performance of 
 
 `models` contains trained models with their `net.pth`, `optimizer.pth`, `scheduler.pth`, `net.pt`, and all other data saved in csv and json files. The directories also contain their own local copy of the scripts in which the hyperparameters, subparameters and file output names are set to correspond with the model in question. **These local scripts provide the models in their states as they were generated for the thesis and are outdated** states of the scripts `SRHD_ML.ipynb` (or `SRHD_ML.py`) and  `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) that are found in the `src` directory. They are outdated in having bugs that are fixed later on and in having outdated comments (see `addendum/`).
 
-`src` is the directory in which one can experiment with creating new models. It has the the most up-to-date version of the scripts for SRHD and GRMHD. **The SRHD script is itself an outdated version of the GRMHD script**; it can continue to be used independently from the GRMHD script, but it has more bugs than the GRMHD script. A listing of commit messages between the two from the original older repository of the project can be found in `addendum/commit_messages_SRHD_to_GRMHD.txt`. For continuation of the project, we advise to just continue to edit the script `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) and keep track of significant states of the script, e.g. optimizing with such and such parameters, in some other way, and to implement an easy way to load different states quickly.
+`src` is the directory in which one can experiment with creating new models. It has the the most up-to-date version of the scripts for SRHD and GRMHD. **The SRHD script is itself an outdated version of the GRMHD script**; it can continue to be used independently from the GRMHD script, but it has more bugs than the GRMHD script. A listing of commit messages between the two from the original older repository of the project can be found in `addendum/commit_messages_SRHD_to_GRMHD.txt`. For continuation of the project, we advise to just continue to edit the script `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) and keep track of significant states of the script, e.g. optimizing with such and such model with such and such parameters, in some other way, and to implement code to easily load different states quickly.
 
 C++ source code files are located in the `cpp` directories.
 
@@ -108,7 +108,7 @@ The executable can then be run with `./<executable name>`.
 
 ## USING THE PYTHON SCRIPTS
 
-### Running the python on Google Colab
+### Running the scripts on Google Colab
 
 Using either the SRHD or the GRMHD script on Google colab is straightforward: open the jupyter notebook file in Colab and 
 
@@ -125,6 +125,10 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 ### Running the scripts on a local machine
 
 1. Follow _How to use this notebook_ at the top of the script.
+
+### Loading models without training or optimizing with the .py files instead of the jupyter notebooks
+
+In the jupyter notebooks, one can load a model without retraining and without optimizing by following _Loading an already trained model_ and _Generating the C++ model_ of _How to use this notebook_ at the top of the script. If jupyter notebook is not available, one can still follow these instructions, and one should simply explicitly comment out code that should not be run according to these instructions in the `.py` file version of the script.
 
 ### Evaluating the running time of an ANN model
 
@@ -151,51 +155,65 @@ print(f"Evaluation time: {start_event.elapsed_time(end_event)} milliseconds")
 
 Some models have scripts ending in `_train.py` and `_optimization.py`. These are just scripts in which `OPTIMIZE` is set to `False` and to `True` respectively, and, together with other settings and hyperparameters set as can be found in the file, are used to test the training or optimization process of an arbitrary model easily on the workstation without having to open the same file and editing it many times to switch between no optimization and optimization.
 
-## TROUBLESHOOTING: INSTALLATION AND RUNNING
+## TROUBLESHOOTING
 
-### Running models trained on the GPU on the CPU and vice versa
+### Running models, trained on the GPU, on the CPU, and vice versa
 
-Problems can arise from running models that are trained on GPU on the CPU and vice versa. These problems are easily solved by mapping the model to the CPU or to the GPU when it is loaded. This mapping is most easily done in the python script from which the model was generated, e.g. `GRMHD_ML.ipynb` or `GRMHD_ML.py`. To map to the CPU when CUDA is not available, one should add the following code directly after the initialization of the `net_loaded` object in the _Loading_ section of the script in question:
+Problems can arise from running models that are trained on GPU on the CPU and vice versa. These problems are solved by mapping the model to the CPU or to the GPU when it is loaded, which can be done without retraining the model. This mapping is most easily done in the python script from which the model was generated, e.g. `GRMHD_ML.ipynb` or `GRMHD_ML.py`. To map to the CPU when CUDA is not available, one should add the following code directly after the initialization of the `net_loaded` object in the _Loading_ section of the script in question:
 
 ```python
+# ...
+
 if torch.cuda.is_available():
     net_loaded.load_state_dict(torch.load("net.pth"))
 else: 
     # Map the loaded network to the CPU.
     net_loaded.load_state_dict(torch.load("net.pth", map_location=torch.device('cpu')))
 
-# ...
-
-# load the optimizer from the .pth file
+# Load the optimizer from the .pth file
 if torch.cuda.is_available():
   optimizer_loaded_state_dict = torch.load("optimizer.pth")
 else:
   optimizer_loaded_state_dict = torch.load("optimizer.pth", map_location=torch.device('cpu'))
 
-# ... 
-
-# load the scheduler from the .pth file
+# Load the scheduler from the .pth file
 if torch.cuda.is_available():
   scheduler_loaded_state_dict = torch.load("scheduler.pth")
 else:
   scheduler_loaded_state_dict = torch.load("scheduler.pth", map_location=torch.device('cpu'))
-```
 
- It could be that one needs to map to the CPU even if CUDA is in fact available—this is the case on the MMAAMS workstation for instance. In that case we can simply replace the above if-else statements with the statements in the else cases only:
-
-```python
-net_loaded.load_state_dict(torch.load("net.pth", map_location=torch.device('cpu')))
-# ...
-optimizer_loaded_state_dict = torch.load("optimizer.pth", map_location=torch.device('cpu'))
 # ... 
-scheduler_loaded_state_dict = torch.load("scheduler.pth", map_location=torch.device('cpu'))
 ```
 
-Finally the input tensor that is used to trace the model and to then generate the `net.pt` file should also be mapped to the CPU or GPU. To map the input tensor to the CPU, one should add **before** the assignment of `dummy_input` in the _Porting the model to C++_ section of the script:
+ It could be that one needs to map these state dictionaries to the CPU even if CUDA is in fact available. In that case we can simply replace the above if-else statements with the statements in the else-cases only:
 
 ```python
+# ...
+net_loaded.load_state_dict(torch.load("net.pth", map_location=torch.device('cpu')))
+optimizer_loaded_state_dict = torch.load("optimizer.pth", map_location=torch.device('cpu'))
+scheduler_loaded_state_dict = torch.load("scheduler.pth", map_location=torch.device('cpu'))
+# ... 
 ```
 
+On systems such as the MMAAMS workstation where CUDA is in fact available but one wants to explicitly map to the CPU, the `device` variable requires to be mapped also. This should be done before the mapping of the state dictionaries disussed above. Mapping `device` makes sure that `net_loaded` uses the correct device and that the input tensor that is used to trace the model and to then generate the `net.pt` file is mapped to correct device also. To map `device` to the CPU, one should add **before** the code in the _Loading_ section
+
+```python
+net_loaded = Net(
+    n_layers_loaded,
+    n_units_loaded,
+    hidden_activation_loaded,
+    output_activation_loaded,
+    dropout_rate_loaded
+).to(device)
+```
+
+, the line
+
+```python
+device = torch.device("cpu")
+```
+
+Do not forget to save and run the python script after the changes discussed have been implemented so that the `net.pt` file is updated accordingly.
 
 ### Running .py python files without having jupyter installed
 
@@ -209,7 +227,7 @@ It is advised to use `python3` command instead of `python` command for running t
 
 1. To resolve `error loading the model`, ensure that the `net.pt` file (not the `net.pth` file) is located in the directory specified by the `path_to_model` variable in the C++ script. `path_to_model` should include the file name itself. Note that if one specifies a relative path in `path_to_model`, this path should point to the location of `net.pt` **relative to the executable**, not relative to the source file.
 
-2. If the error is still encountered it is likely due to trying to load a GPU trained model on the CPU or vice versa (see _Running models trained on the GPU on the CPU and vice versa_). For instance, if `std::cerr << e.what() << '\n';` outputs
+2. If the error persists it is likely due to trying to load a GPU-trained model on the CPU or vice versa (see _Running models, trained on the GPU, on the CPU, and vice versa_). For instance, if `std::cerr << e.what() << '\n';` outputs
 
 ```sh
 [username@pc build]$ cmake --build . --config release && ./GRMHD
@@ -228,7 +246,7 @@ frame #29: __libc_start_main + 0x8a (0x7fc328c3990a in /usr/lib/libc.so.6)
 frame #30: _start + 0x25 (0x5573f8374435 in ./GRMHD)
 ```
 
-, then this could be caused by the problem of trying to run a GPU-trained model on the CPU. To resolve the issue one should execute the code as specified in _Running models trained on the GPU_, and recreate the `net.pt` file. To do so without retraining or reoptimizing a model, follow _Loading an already trained model_ and _Generating the C++ model_ of _How to use this notebook_ at the top of the python script. If jupyter notebook is not available, one can still follow these instructions, and one should simply explicitly comment out code that should not be run in the `.py` file version of the script.
+, then this could be caused by the problem of trying to run a GPU-trained model on the CPU. To resolve the issue one should make the modifications as specified in _Running models, trained on the GPU, on the CPU, and vice versa_.
 
 ### Issues with the STUDY_NAME constant
 
@@ -244,4 +262,4 @@ This issue arises when class `Net` is not defined. This class definition still n
 
 ### NameError: name 'net' is not defined. Did you mean: 'Net'?
 
-This issue can e.g. arise when trying to load a model without optimizing or training it beforehand. Note that the `net` object is an instance of class `Net` that is only used in optimizing and training; when we load a model without either training or optimizing, we use the `net_loaded` object instead. Likewise, all the variables associated with `net`, such as `train_metrics`, `test_metrics`, `var_dict`, etc. are suffixed by `_loaded` when we load a model without optimizing or training it beforehand: `train_metrics_loaded`, `test_metrics_loaded`, `var_dict_loaded` etc. This was done so that loading of a model could be done without overriding the original variables by redefining them upon loading of a model and so that correct loading can be verified.
+This issue can e.g. arise when trying to load a model without training or optimizing. Note that the `net` object is an instance of class `Net` that is only used in optimizing and training; when we load a model without either training or optimizing, we use the `net_loaded` object instead. Likewise, all the variables associated with `net`, such as `train_metrics`, `test_metrics`, `var_dict`, etc. are suffixed by `_loaded` when we load a model without optimizing or training it beforehand: `train_metrics_loaded`, `test_metrics_loaded`, `var_dict_loaded` etc. This was done so that loading of a model could be done without overriding the original variables by redefining them upon loading of a model and so that correct loading can be verified.
