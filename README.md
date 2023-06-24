@@ -155,7 +155,7 @@ Some models have scripts ending in `_train.py` and `_optimization.py`. These are
 
 ### Running models trained on the GPU on the CPU and vice versa
 
-Problems can arise from running models that are trained on GPU on the CPU and vice versa. These problems are easily solved by mapping the model to the CPU or to the GPU when it is loaded. This mapping is most easily done in the python script from which the model was generated, e.g. `GRMHD_ML.ipynb` or `GRMHD_ML.py`, with e.g. the code
+Problems can arise from running models that are trained on GPU on the CPU and vice versa. These problems are easily solved by mapping the model to the CPU or to the GPU when it is loaded. This mapping is most easily done in the python script from which the model was generated, e.g. `GRMHD_ML.ipynb` or `GRMHD_ML.py`. To map to the CPU when CUDA is not available, one should add the following code directly after the initialization of the `net_loaded` object in the _Loading_ section of the script in question:
 
 ```python
 if torch.cuda.is_available():
@@ -163,9 +163,39 @@ if torch.cuda.is_available():
 else: 
     # Map the loaded network to the CPU.
     net_loaded.load_state_dict(torch.load("net.pth", map_location=torch.device('cpu')))
+
+# ...
+
+# load the optimizer from the .pth file
+if torch.cuda.is_available():
+  optimizer_loaded_state_dict = torch.load("optimizer.pth")
+else:
+  optimizer_loaded_state_dict = torch.load("optimizer.pth", map_location=torch.device('cpu'))
+
+# ... 
+
+# load the scheduler from the .pth file
+if torch.cuda.is_available():
+  scheduler_loaded_state_dict = torch.load("scheduler.pth")
+else:
+  scheduler_loaded_state_dict = torch.load("scheduler.pth", map_location=torch.device('cpu'))
 ```
 
-in the _Loading_ section of the script in question.
+ It could be that one needs to map to the CPU even if CUDA is in fact available—this is the case on the MMAAMS workstation for instance. In that case we can simply replace the above if-else statements with the statements in the else cases only:
+
+```python
+net_loaded.load_state_dict(torch.load("net.pth", map_location=torch.device('cpu')))
+# ...
+optimizer_loaded_state_dict = torch.load("optimizer.pth", map_location=torch.device('cpu'))
+# ... 
+scheduler_loaded_state_dict = torch.load("scheduler.pth", map_location=torch.device('cpu'))
+```
+
+Finally the input tensor that is used to trace the model and to then generate the `net.pt` file should also be mapped to the CPU or GPU. To map the input tensor to the CPU, one should add **before** the assignment of `dummy_input` in the _Porting the model to C++_ section of the script:
+
+```python
+```
+
 
 ### Running .py python files without having jupyter installed
 
@@ -199,3 +229,19 @@ frame #30: _start + 0x25 (0x5573f8374435 in ./GRMHD)
 ```
 
 , then this could be caused by the problem of trying to run a GPU-trained model on the CPU. To resolve the issue one should execute the code as specified in _Running models trained on the GPU_, and recreate the `net.pt` file. To do so without retraining or reoptimizing a model, follow _Loading an already trained model_ and _Generating the C++ model_ of _How to use this notebook_ at the top of the python script. If jupyter notebook is not available, one can still follow these instructions, and one should simply explicitly comment out code that should not be run in the `.py` file version of the script.
+
+### Issues with the STUDY_NAME constant
+
+The file pointed to by the constant `STUDY_NAME` is a pickle file that saves all trials of an Optuna study. Some parts of the code do not run if the file specified by `STUDY_NAME` is not found. If there was no previous Optuna study, or it is unnecessary to load such an Optuna study again, `STUDY_NAME` can simply be set to `None` in order to run the code.
+
+### save_file being undefined
+
+The function `save_file` exists to save files to a specified google drive location; this is e.g. useful on colab where the runtime which contains saved files is automatically deleted after a period of inactivity. It is required to load the definition of `save_file` in the script even when colab or google drive is not used to save the file. If colab or google drive is not used, then `save_file` does nothing.
+
+### NameError: name 'Net' is not defined. Did you mean: 'set'?
+
+This issue arises when class `Net` is not defined. This class definition still needs to be known e.g. when loading a pre-trained model. The issue is resolved by having class `Net` be defined.
+
+### NameError: name 'net' is not defined. Did you mean: 'Net'?
+
+This issue can e.g. arise when trying to load a model without optimizing or training it beforehand. Note that the `net` object is an instance of class `Net` that is only used in optimizing and training; when we load a model without either training or optimizing, we use the `net_loaded` object instead. Likewise, all the variables associated with `net`, such as `train_metrics`, `test_metrics`, `var_dict`, etc. are suffixed by `_loaded` when we load a model without optimizing or training it beforehand: `train_metrics_loaded`, `test_metrics_loaded`, `var_dict_loaded` etc. This was done so that loading of a model could be done without overriding the original variables by redefining them upon loading of a model and so that correct loading can be verified.
