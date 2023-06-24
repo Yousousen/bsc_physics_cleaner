@@ -128,7 +128,7 @@ Using either the SRHD or the GRMHD script on Google colab is straightforward: op
 
 ### Evaluating an ANN model
 
-Evaluating of an artificial neural network model can be done with `torch.cuda.Event`. This is illustrated at the end of `model/NNGR{1,2}/NNGR{1,2}_evaluation.py`. The relevant code is:
+Evaluating of an artificial neural network model can be done with `torch.cuda.Event`. This is illustrated at the end of `model/NNGR1/NNGR1_evaluation.py`. The relevant code is:
 
 ```python
 example_input = generate_input_data(*generate_samples(1))
@@ -147,9 +147,9 @@ torch.cuda.synchronize() # Wait for the events to be recorded
 print(f"Evaluation time: {start_event.elapsed_time(end_event)} milliseconds")
 ```
 
-### Other scripts in the model directory
+### Other scripts in the model and src directories
 
-The `model/NNGR2` directory moreover has the `NNGR2_train.py` and the `NNGR2_optimization.py` scripts. These are just scripts in which `OPTIMIZE` is set to `False` and `True` respectively, and, together with other settings and hyperparameters set as can be found in the file, are used to test the training or optimization process of an arbitrary model easily on the workstation without having to open the same file and editing it many times to switch between no optimization and optimization.
+Some models have scripts ending in `_train.py` and `_optimization.py`. These are just scripts in which `OPTIMIZE` is set to `False` and to `True` respectively, and, together with other settings and hyperparameters set as can be found in the file, are used to test the training or optimization process of an arbitrary model easily on the workstation without having to open the same file and editing it many times to switch between no optimization and optimization.
 
 ## TROUBLESHOOTING: INSTALLATION AND RUNNING
 
@@ -170,3 +170,13 @@ in the _Loading_ section of the script in question.
 ### Running .py python files without having jupyter installed
 
 Make sure that the  `get_ipython` lines in the `.py` files are commented out when running these files on a system without jupyter installed.
+
+### python vs python3
+
+It is advised to use `python3` command instead of `python` command for running the scripts e.g. on the workstation, as `python` can still be linked to version 2 of the language.
+
+### error loading the model
+
+To resolve `error loading the model`, it is advised to ensure that the `net.pt` file (not the `net.pth`) is located in the directory specified by the `path_to_model` variable in the C++ script.
+
+To resolve `e.what()`: unspecified file error
