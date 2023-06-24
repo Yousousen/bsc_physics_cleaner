@@ -169,7 +169,7 @@ in the _Loading_ section of the script in question.
 
 ### Running .py python files without having jupyter installed
 
-Make sure that the  `get_ipython` lines in the `.py` files are commented out when running these files on a system without jupyter installed.
+Make sure that the `get_ipython` lines in the `.py` files are commented out when running these files on a system without jupyter installed.
 
 ### python vs python3
 
@@ -177,6 +177,25 @@ It is advised to use `python3` command instead of `python` command for running t
 
 ### error loading the model
 
-To resolve `error loading the model`, it is advised to ensure that the `net.pt` file (not the `net.pth`) is located in the directory specified by the `path_to_model` variable in the C++ script.
+1. To resolve `error loading the model`, ensure that the `net.pt` file (not the `net.pth` file) is located in the directory specified by the `path_to_model` variable in the C++ script. `path_to_model` should include the file name itself. Note that if one specifies a relative path in `path_to_model`, this path should point to the location of `net.pt` **relative to the executable**, not relative to the source file.
 
-To resolve `e.what()`: unspecified file error
+2. If the error is still encountered it is likely due to trying to load a GPU trained model on the CPU or vice versa (see _Running models trained on the GPU on the CPU and vice versa_). For instance, if `std::cerr << e.what() << '\n';` outputs
+
+```sh
+[username@pc build]$ cmake --build . --config release && ./GRMHD
+[ 50%] Building CXX object CMakeFiles/GRMHD.dir/GRMHD.cpp.o
+[100%] Linking CXX executable GRMHD
+[100%] Built target GRMHD
+error loading the model, did you correctly set the path to the net.pt file?
+error: Could not run 'aten::empty_strided' with arguments from the 'CUDA' backend. 
+
+# ...
+
+frame #26: torch::jit::load(std::string const&, c10::optional<c10::Device>, bool) + 0xac (0x7fc32e1d7c7c in /path/to/libtorch/lib/libtorch_cpu.so)
+frame #27: main + 0xb6 (0x5573f837482a in ./GRMHD)
+frame #28: <unknown function> + 0x23850 (0x7fc328c39850 in /usr/lib/libc.so.6)
+frame #29: __libc_start_main + 0x8a (0x7fc328c3990a in /usr/lib/libc.so.6)
+frame #30: _start + 0x25 (0x5573f8374435 in ./GRMHD)
+```
+
+, then this could be caused by the problem of trying to run a GPU-trained model on the CPU. To resolve the issue one should execute the code as specified in _Running models trained on the GPU_, and recreate the `net.pt` file. To do so without retraining or reoptimizing a model, follow _Loading an already trained model_ and _Generating the C++ model_ of _How to use this notebook_. If jupyter notebook is not available, one can still follow these instructions, and one should simply explicitly comment out code that should not be run in the `.py` file version of the script.
