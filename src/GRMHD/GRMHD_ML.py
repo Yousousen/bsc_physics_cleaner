@@ -53,7 +53,7 @@
 # 
 # Use this first cell to **convert this notebook** to a python script.
 
-# Next some cells for working on **google colab**,
+# Next some cells for working on google colab. NOTE that we need to define `save_file` even if we are not working with a mounted drive.
 
 # In[7]:
 
@@ -66,7 +66,7 @@ drive_mounted = os.path.exists("/content/drive")
 # change this to your desired folder
 drive_folder = "/content/drive/desired_path"
 
-# define a function to save a file to the drive or the current directory
+# Define a function to save a file to the drive or the current directory.
 def save_file(file_name):
   if drive_mounted:
     # save the file to the drive folder
@@ -74,7 +74,7 @@ def save_file(file_name):
     # copy the file from the current directory to the drive folder
     shutil.copyfile(file_name, file_path)
   else:
-    # do nothing as the file is already in the current directory
+    # Do nothing if no drive is mounted.
     pass
 
 
@@ -124,7 +124,7 @@ OPTIMIZE = True # Whether to optimize the hyperparameters or to use predetermine
 ZSCORE_NORMALIZATION = False # Whether to z-score normalize the input data.
 LOAD_DATA_FROM_CSV = False  # If not true we generate the data in this file and save to {x_train,y_train,x_test,y_test}.csv, otherwise we load the data from files of the same name.
 # STUDY_NAME = None
-STUDY_NAME = "TestStudy"
+STUDY_NAME = "TestStudy" # Used to load previous study with Optuna optimization trials. If this is undesired, set to None.
 
 csv_filenames = { # File names to load input data and labels from if LOAD_DATA_FROM_CSV is True.
     "x_train": "x_train.csv",
@@ -214,6 +214,7 @@ def sample_primitive_variables_and_metric():
 
     return rho, epsilon, vx, vy, vz, Bx, By, Bz, gxx, gxy, gxz, gyy, gyz, gzz
 
+# This function checks if any of the conditions that make the sample invalid are met, in which case False is returned and the sample is discarded in generate_samples.
 def check_sample(rho, epsilon, vx, vy, vz, Bx, By, Bz, gxx, gxy, gxz, gyy, gyz, gzz):
     wtemp_expr = 1 - (gxx * vx**2 + gyy * vy**2 + gzz * vz**2 + 2 * gxy * vx * vy + 2 * gxz * vx * vz + 2 * gyz * vy * vz)
     sdet_expr = gxx * gyy * gzz + 2 * gxy * gxz * gyz - gxx * gyz ** 2 - gyy * gxz ** 2 - gzz * gxy ** 2
@@ -224,6 +225,7 @@ def check_sample(rho, epsilon, vx, vy, vz, Bx, By, Bz, gxx, gxy, gxz, gyy, gyz, 
         # print(f"Sample passed checks. vx^2+vy^2+vz^2: {vx**2 + vy**2 + vz**2}, wtemp_expr: {wtemp_expr}, sdet_expr: {sdet_expr}")
         return True
 
+# This function generates samples until n_samples valid samples are found.
 def generate_samples(n_samples):
     samples = []
     while len(samples) < n_samples:
@@ -237,8 +239,7 @@ def sdet(gxx, gxy, gxz, gyy, gyz, gzz):
     return (gxx * gyy * gzz + 2 * gxy * gxz * gyz - gxx * gyz ** 2 - gyy * gxz ** 2 - gzz * gxy ** 2) ** 0.5
 
 # Defining a function that computes conserved variables from primitive variables and the metric
-# We follow the source code of GRaM-X: A new GPU-accelerated dynamical spacetime GRMHD code for Exascale
-# computing with the Einstein Toolkit of Shankar et al.
+# We follow the calculations in the source code file GRHydroX_Prim2Con.hxx of the paper GRaM-X: A new GPU-accelerated dynamical spacetime GRMHD code for Exascale computing with the Einstein Toolkit of Shankar et al.
 def compute_conserved_variables(rho, epsilon, vx, vy, vz, Bx, By, Bz, gxx, gxy, gxz, gyy, gyz, gzz):
     pres = eos_analytic(rho, epsilon)
     wtemp = 1 / (1 - (gxx * vx**2 + gyy * vy**2 + gzz * vz**2 +
@@ -880,9 +881,8 @@ def create_model(trial, optimize):
         optimize (boolean): Whether to optimize the hyperparameters or to use predefined values.
 
     Returns:
-        tuple: A tuple of (net, loss_fn, optimizer, batch_size, n_epochs,
-            scheduler, loss_name, optimizer_name, scheduler_name,
-            n_units, n_layers, hidden_activation, output_activation),
+        tuple: A tuple of (net, loss_fn, optimizer, batch_size, n_epochs, scheduler, loss_name, optimizer_name,
+            scheduler_name, n_units, n_layers, hidden_activation, output_activation, lr, dropout_rate),
             where net is the trial network,
             loss_fn is the loss function,
             optimizer is the optimizer,
