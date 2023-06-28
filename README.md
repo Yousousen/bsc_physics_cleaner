@@ -6,7 +6,7 @@ Repository for BSc. Physics and Astronomy project: Improving the Performance of 
 
 `models` contains trained models with their `net.pth`, `optimizer.pth`, `scheduler.pth`, `net.pt`, and all other data saved in csv and json files. The directories also contain their own local copy of the scripts in which the hyperparameters, subparameters and file output names are set to correspond with the model in question. **These local scripts provide the models in their states as they were generated for the thesis and are outdated** states of the scripts `SRHD_ML.ipynb` (or `SRHD_ML.py`) and  `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) that are found in the `src` directory. They are outdated in having bugs that are fixed later on (see `addendum/`) and in having outdated comments.
 
-`src` is the directory in which one can experiment with creating new models. It has the the most up-to-date version of the scripts for SRHD and GRMHD. **The SRHD script is itself an outdated version of the GRMHD script**; it can continue to be used independently from the GRMHD script, but it has more bugs than the GRMHD script. A listing of commit messages between the two from the original older repository of the project can be found in `addendum/commit_messages_SRHD_to_GRMHD.txt`. For continuation of the project, we advise to just continue to edit the script `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) and keep track of significant states of the script, e.g. optimizing with such and such model with such and such parameters, in some other way, and to implement code to easily load different states quickly.
+`src` is the directory in which one can experiment with creating new models. It has the most up-to-date version of the scripts for SRHD and GRMHD. **The SRHD script is itself an outdated version of the GRMHD script**; it can continue to be used independently of the GRMHD script, but it has more bugs than the GRMHD script. A listing of commit messages between the two from the original older repository of the project can be found in `addendum/commit_messages_SRHD_to_GRMHD.txt`. For continuation of the project, we advise to just continue to edit the script `GRMHD_ML.ipynb` (or `GRMHD_ML.py`) and keep track of significant states of the script, e.g. optimizing with such and such model with such and such parameters, in some other way, and to implement code to easily load different states quickly.
 
 C++ source code files are located in the `cpp` directories.
 
@@ -32,12 +32,12 @@ Make sure torch is uncommented in the file.
 
 #### Installation for the C++ scripts
 
-If a GPU is available, one can follow the steps as listed under _MMAAMS workstation_, _Installation for the C++ scripts_, but choose a cuda-enabled distribution of libtorch instead. The rest of the procedure is the same.
+If a GPU is available, one can follow the steps as listed under _MMAAMS workstation_, _Installation for the C++ scripts_, but choose a CUDA-enabled distribution of libtorch instead. The rest of the procedure is the same.
 ### Colab
 
-1. Open the github repository in Google Colab.
+1. Open the GitHub repository in Google Colab.
 
-2. Create a copy of the jupyter notebook file that one wants to run so that one is able to save changes.
+2. Create a copy of the Jupyter notebook file that one wants to run so that one is able to save changes.
 
 3. Continue with _Using the scripts on Google Colab_.
 
@@ -51,13 +51,13 @@ At the time of writing (Fri Jun 23 11:17:37 AM CEST 2023), Anaconda was required
 
 2. [Install anaconda](https://pytorch.org/get-started/locally/#linux-anaconda)
 
-3. Setup a conda virtual environment
+3. Set up a conda virtual environment
 
 ```sh
 conda create -n <env_name> python
 ```
 
-To setup with a specific version of python, run the following instead with `3.x.x` replaced by the desired version:
+To set up with a specific version of python, run the following instead with `3.x.x` replaced by the desired version:
 
 ```sh
 conda create -n wpa python=3.x.x
@@ -91,7 +91,7 @@ pip install -r requirements.txt
 
 Running a model in C++ requires libtorch. At the time of writing (Fri Jun 23 11:17:52 AM CEST 2023), we could not get libtorch to work with the `sm_86` architecture of the Nvidia RTX A6000 GPU on the workstation, and so we ran it on the CPU only. These are the installation instructions for the latter procedure.
 
-1. Download libtorch into the desired directory ([see pytorch documentation for the latest version](https://pytorch.org/cppdocs/installing.html))
+1. Download libtorch into the desired directory ([see PyTorch documentation for the latest version](https://pytorch.org/cppdocs/installing.html))
 
 ```sh
 wget https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-2.0.1%2Bcpu.zip
@@ -99,7 +99,7 @@ wget https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-2.0.1%2
 
 2. Unzip the downloaded zip file.
 
-The next step requires the `CMakeLists.txt` file to be set up, which we have already done for all scripts. However, if problems are encountered, consult [the pytorch documentation on using torch in C++](https://pytorch.org/cppdocs/installing.html).
+The next step requires the `CMakeLists.txt` file to be set up, which we have already done for all scripts. However, if problems are encountered, consult [the PyTorch documentation on using torch in C++](https://pytorch.org/cppdocs/installing.html).
 
 3. As found in the _How to use this notebook_ section in the scripts, building can be done with
 
@@ -115,25 +115,25 @@ The executable can then be run with `./<executable name>`.
 
 ### Running the scripts on Google Colab
 
-Using either the SRHD or the GRMHD script on Google colab is straightforward: open the jupyter notebook file in Colab and 
+Using either the SRHD or the GRMHD script on Google Colab is straightforward: open the Jupyter notebook file in Colab and 
 
-1. Set `drive_folder` to save files to your desired google drive directory.
+1. Set `drive_folder` to save files to your desired Google Drive directory.
 2. Comment (not uncomment) `%%script echo skipping` of the drive mounting cell.
 3. Comment (not uncomment) `%%script echo skipping` line of the `pip install` cell.
 4. The rest is the same as running locally, i.e. as in _Using the scripts on a local machine_.
 
 ### Running the scripts on (MMAAMS) workstation
 
-1. If there is no access to a jupyter environment, use the `.py` version of the script instead.
+1. If there is no access to a Jupyter environment, use the `.py` version of the script instead.
 2. Follow _How to use this notebook_ at the top of the script.
 
 ### Running the scripts on a local machine
 
 1. Follow _How to use this notebook_ at the top of the script.
 
-### Loading models without training or optimizing with the .py files instead of the jupyter notebooks
+### Loading models without training or optimizing with the .py files instead of the Jupyter notebooks
 
-In the jupyter notebooks, one can load a model without retraining and without optimizing by following _Loading an already trained model_ and _Generating the C++ model_ of _How to use this notebook_ at the top of the script. If jupyter notebook is not available, one can still follow these instructions, and one should simply explicitly comment out code that should not be run according to these instructions in the `.py` file version of the script.
+In the Jupyter notebooks, one can load a model without retraining and without optimizing by following _Loading an already trained model_ and _Generating the C++ model_ of _How to use this notebook_ at the top of the script. If Jupyter notebook is not available, one can still follow these instructions, and one should simply explicitly comment out code that should not be run according to these instructions in the `.py` file version of the script.
 
 ### Evaluating the running time of an ANN model
 
@@ -164,7 +164,7 @@ Some models have scripts ending in `_train.py` and `_optimization.py`. These are
 
 ### Running models, trained on the GPU, on the CPU, and vice versa
 
-Problems can arise from running models that are trained on GPU on the CPU and vice versa. These problems are solved by mapping the model to the CPU or to the GPU when it is loaded, which can be done without retraining the model. This mapping is most easily done in the python script from which the model was generated, e.g. `GRMHD_ML.ipynb` or `GRMHD_ML.py`. To map to the CPU when CUDA is not available, one should add the following code directly after the initialization of the `net_loaded` object in the _Loading_ section of the script in question:
+Problems can arise from running models that are trained on the GPU on the CPU and vice versa. These problems are solved by mapping the model to the CPU or to the GPU when it is loaded, which can be done without retraining the model. This mapping is most easily done in the python script from which the model was generated, e.g. `GRMHD_ML.ipynb` or `GRMHD_ML.py`. To map to the CPU when CUDA is not available, one should add the following code directly after the initialization of the `net_loaded` object in the _Loading_ section of the script in question:
 
 ```python
 # ...
@@ -200,7 +200,7 @@ scheduler_loaded_state_dict = torch.load("scheduler.pth", map_location=torch.dev
 # ... 
 ```
 
-On systems such as the MMAAMS workstation where CUDA is in fact available but one wants to explicitly map to the CPU, the `device` variable requires to be mapped also. This should be done before the mapping of the state dictionaries disussed above. Mapping `device` makes sure that `net_loaded` uses the correct device and that the input tensor that is used to trace the model and to then generate the `net.pt` file is mapped to correct device also. To map `device` to the CPU, one should add **before** the code in the _Loading_ section
+On systems such as the MMAAMS workstation where CUDA is in fact available, but one wants to explicitly map to the CPU, the `device` variable requires to be mapped also. This should be done before the mapping of the state dictionaries discussed above. Mapping `device` makes sure that `net_loaded` uses the correct device and that the input tensor that is used to trace the model and to then generate the `net.pt` file is mapped to the correct device also. To map `device` to the CPU, one should add **before** the code in the _Loading_ section
 
 ```python
 net_loaded = Net(
@@ -220,9 +220,9 @@ device = torch.device("cpu")
 
 Do not forget to save and run the python script after the changes discussed have been implemented so that the `net.pt` file is updated accordingly.
 
-### Running .py python files without having jupyter installed
+### Running .py python files without having Jupyter installed
 
-Make sure that the `get_ipython` lines in the `.py` files are commented out when running these files on a system without jupyter installed.
+Make sure that the `get_ipython` lines in the `.py` files are commented out when running these files on a system without Jupyter installed.
 
 ### python vs python3
 
@@ -259,7 +259,7 @@ The file pointed to by the constant `STUDY_NAME` is a pickle file that saves all
 
 ### save_file being undefined
 
-The function `save_file` exists to save files to a specified google drive location; this is e.g. useful on colab where the runtime which contains saved files is automatically deleted after a period of inactivity. It is required to load the definition of `save_file` in the script even when colab or google drive is not used to save the file. If colab or google drive is not used, then `save_file` does nothing.
+The function `save_file` exists to save files to a specified Google Drive location; this is e.g. useful on Colab where the runtime which contains saved files is automatically deleted after a period of inactivity. It is required to load the definition of `save_file` in the script even when Colab or Google Drive is not used to save the file. If Colab or Google Drive is not used, then `save_file` does nothing.
 
 ### NameError: name 'Net' is not defined. Did you mean: 'set'?
 
