@@ -137,7 +137,7 @@ In the Jupyter notebooks, one can load a model without retraining and without op
 
 ### Evaluating the running time of an ANN model
 
-Evaluating of an artificial neural network model can be done with `torch.cuda.Event`. This is illustrated at the end of `model/NNGR1/NNGR1_evaluation.py`. The relevant code is:
+Evaluation of an artificial neural network model can be done with `torch.cuda.Event`. This is illustrated at the end of `model/NNGR1/NNGR1_evaluation.py`. The relevant code is:
 
 ```python
 example_input = generate_input_data(*generate_samples(1))
