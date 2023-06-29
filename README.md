@@ -1,6 +1,6 @@
 # DOCUMENTATION
 
-Repository for BSc. Physics and Astronomy project: Improving the Performance of Conservative-to-Primitive Inversion in Relativistic Hydrodynamics Using Artificial Neural Networks. Thesis and presentation can be found in `thesis.pdf` and `presentation.pdf` in the root directory.
+Repository for B.Sc. Physics and Astronomy project: Improving the Performance of Conservative-to-Primitive Inversion in Relativistic Hydrodynamics Using Artificial Neural Networks. Thesis and presentation can be found in `thesis.pdf` and `presentation.pdf` in the root directory.
 
 ## DIRECTORY STRUCTURE
 
